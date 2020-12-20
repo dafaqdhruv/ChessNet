@@ -51,6 +51,15 @@ class player {
 	piece* getKnight() { return Knight;}
 	piece* getPawn() { return Pawn;}
 
+	void print_all_locations(piece* head){
+		while(head != NULL){
+
+			cout<<"\t"<<(char)(head->getx()+97)<<head->gety()<<'\n';
+			head = head->next;
+
+		}
+	}
+
 	void set_pieces(bool affiliation){
 
 		if(affiliation){

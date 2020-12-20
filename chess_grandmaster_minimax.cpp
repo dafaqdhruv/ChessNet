@@ -35,8 +35,10 @@ int main(){
 
 	// set_board();
 	print_grid(input, white, black);
-
+	parse_input(white);
 	// input = game(input, weight);
+
+
 
 	cout<<"You "<< (input ? "Won!!" : "lost :/");
 	return 0;
