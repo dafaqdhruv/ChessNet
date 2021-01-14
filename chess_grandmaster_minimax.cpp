@@ -10,16 +10,6 @@ using namespace std;
 
 
 
-struct moves{
-	int up;
-	int right;
-
-	public : 
-		moves(){
-			up = right = 0;
-		}
-};
-
 int main(){
 
 	bool input;
@@ -40,6 +30,6 @@ int main(){
 
 
 
-	cout<<"You "<< (input ? "Won!!" : "lost :/");
+	cout<<"You "<< (input ? "Won!!" : "lost :/") << "\n";
 	return 0;
 }
