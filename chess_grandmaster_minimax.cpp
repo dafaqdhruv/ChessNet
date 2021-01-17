@@ -15,6 +15,9 @@ int main(){
 	bool input;
 	int weight;
 
+	int board[8][8];
+	init_board(board);
+
 	player*  white = new player(1);
 	player*  black = new player(0);
 
@@ -24,8 +27,8 @@ int main(){
 	cin>>weight;
 
 	// set_board();
-	print_grid(input, white, black);
-	parse_input(white);
+	print_grid(input, white, black, board);
+	parse_input(white,grid);	
 	// input = game(input, weight);
 
 

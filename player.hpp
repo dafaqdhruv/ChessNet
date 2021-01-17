@@ -5,11 +5,12 @@
 
 using namespace std;
 
-void insert_pieces( piece** head, int posx, int posy, bool affiliation, int piece_type){
+template <class PP>
+void insert_pieces( PP** head, int posx, int posy, bool affiliation, int piece_type){
 
-   piece* new_piece = new piece(affiliation, piece_type, posx, posy);
+   PP* new_piece = new PP(affiliation, piece_type, posx, posy);
 
-   piece* last = *head;
+   PP* last = *head;
 
    new_piece->next = nullptr;
    
@@ -19,13 +20,17 @@ void insert_pieces( piece** head, int posx, int posy, bool affiliation, int piec
    }
 
 
-    while (last->next != NULL)   
+    while (last->next != nullptr)   
         last = last->next; 
 
 
     last->next = new_piece;   
     return; 
 }
+
+
+
+
 
 class player {
 
@@ -36,23 +41,29 @@ class player {
 	Knight* N;
 	Pawn* 	P;
 
+
 	public :
 
 	player(bool affiliation){
-		K = Q = R = B = N = P = nullptr;
+		K = nullptr;Q = nullptr;R = nullptr;B = nullptr;N = nullptr;P = nullptr;
 		set_pieces(affiliation);
 	}
 	~player(){}	
 
-	piece* getKing() { return K;}
-	piece* getQueen() { return Q;}
-	piece* getRook() { return R;}
-	piece* getBishop() { return B;}
-	piece* getKnight() { return N;}
-	piece* getPawn() { return P;}
 
-	void print_all_locations(piece* head, int grid[8][8]){
-		while(head != NULL){
+
+	King* getKing() { return K;}
+	Queen* getQueen() { return Q;}
+	Rook* getRook() { return R;}
+	Bishop* getBishop() { return B;}
+	Knight* getKnight() { return N;}
+	Pawn* getPawn() { return P;}
+
+
+
+	template <class PP>
+	void print_all_locations(PP* head, int grid[8][8]){
+		while(head != nullptr){
 
 			cout<<"\t"<<(char)(head->getx()+97)<<head->gety()<<"\t\t";
 			head->possible_moves(grid);

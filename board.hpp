@@ -1,4 +1,4 @@
-#pragma once
+	#pragma once
 #include <iostream>
 #include <string>
 #include "pieces.hpp"
@@ -10,19 +10,27 @@ using namespace std;
 
 
 
-int board[8][8] = {
-						{0,0,0,0,0,0,0,0},
-						{0,0,0,0,0,0,0,0},
-						{0,0,0,0,0,0,0,0},
-						{0,0,0,0,0,0,0,0},
-						{0,0,0,0,0,0,0,0},
-						{0,0,0,0,0,0,0,0},
-						{0,0,0,0,0,0,0,0},
-						{0,0,0,0,0,0,0,0}
-					};
+int grid[8][8] = {
+					{0,0,0,0,0,0,0,0},
+					{0,0,0,0,0,0,0,0},
+					{0,0,0,0,0,0,0,0},
+					{0,0,0,0,0,0,0,0},
+					{0,0,0,0,0,0,0,0},
+					{0,0,0,0,0,0,0,0},
+					{0,0,0,0,0,0,0,0},
+					{0,0,0,0,0,0,0,0}
+				};
 
+void init_board(int board[8][8]){
 
+	for(int i =0;i<8;i++){
+		for (int j=0;j<8;j++){
 
+			board[i][j] = 0;
+		}
+	}
+
+}
 
 int piece_at_pos(int num){
 
@@ -42,6 +50,7 @@ int piece_at_pos(int num){
 		case 5 :	return 5;
 
 	}
+	return 999;
 }
 
 string piece_name(int type){
@@ -61,57 +70,45 @@ string piece_name(int type){
 		case  1	:
 		case -1	:	return "King";
 	}
+	return "err0";
 }
 
-void copy_list(piece* temp){
+template<class PP>
+void copy_list(PP* temp, int grid[8][8]){
 
 	int x = 0; 
 	int y = 0;
-	while(temp != NULL){
+	while(temp != nullptr){
 
 		x = temp->getx();
 		y = temp->gety();
 
-		board[x][y] = temp->getType();
+		grid[x][y] = temp->getType();
 		temp = temp->next;
 	} 
 }
 
-void print_grid(bool affiliation, player* White, player* Black){
+
+
+
+
+
+void print_grid(bool affiliation, player* White, player* Black, int board[8][8]){
 	cls
 
+	copy_list(White->getKing(),board);
+	copy_list(White->getQueen(),board);
+	copy_list(White->getRook(),board);
+	copy_list(White->getKnight(),board);
+	copy_list(White->getBishop(),board);
+	copy_list(White->getPawn(),board);
 
-	piece* temp = NULL;
-
-	temp = White->getKing();
-	copy_list(temp);
-	temp = White->getQueen();
-	copy_list(temp);
-	temp = White->getRook();
-	copy_list(temp);
-	temp = White->getKnight();
-	copy_list(temp);
-	temp = White->getBishop();
-	copy_list(temp);
-	temp = White->getPawn();
-	copy_list(temp);
-
-
-
-	temp = Black->getKing();
-	copy_list(temp);
-	temp = Black->getQueen();
-	copy_list(temp);
-	temp = Black->getRook();
-	copy_list(temp);
-	temp = Black->getKnight();
-	copy_list(temp);
-	temp = Black->getBishop();
-	copy_list(temp);
-	temp = Black->getPawn();
-	copy_list(temp);
-
-
+	copy_list(Black->getKing(),board);
+	copy_list(Black->getQueen(),board);
+	copy_list(Black->getRook(),board);
+	copy_list(Black->getKnight(),board);
+	copy_list(Black->getBishop(),board);
+	copy_list(Black->getPawn(),board);
 
 
 	string cols = 	"\t\ta\tb\tc\td\te\tf\tg\th    \n\n";
@@ -146,4 +143,3 @@ void print_grid(bool affiliation, player* White, player* Black){
 
 	cout << cols;
 }
-

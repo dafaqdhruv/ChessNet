@@ -40,15 +40,13 @@ class piece {
 
 	public :
 
-	piece* next;													//  Pawns, Bishop, Knight, Rook, Queen, King.
+	// piece* next;													//  Pawns, Bishop, Knight, Rook, Queen, King.
 	
 	piece();
 	piece(bool blk_or_white, int piece_type, int x, int y){
 
 		posx = x;
 		posy = y;
-
-		next = nullptr;
 
 		type = piece_type;
 		affiliation = blk_or_white;
@@ -76,21 +74,24 @@ class King : public piece
 {
 	public :
 		King( bool blk_or_white, int piece_type, int x, int y) : piece(blk_or_white, piece_type, x, y)
-		{}
+		{
+			next = nullptr;
 
+		}
 
-		vector<pos>  possible_moves()	 {
+		King* next;
+		vector<pos>  possible_moves(int grid[8][8]){
 
 			vector<pos> out;
 
-			int tmpX = getx();
-			int tmpY = gety();
+		// 	int tmpX = getx();
+		// 	int tmpY = gety();
 			
-			for(int i = -1;i<2;i++){
-				for(int j =-1; j<2;j++){
-					if(i || j)		out.emplace_back((getx()+i,gety()+j));
-				}
-			}
+		// 	for(int i = -1;i<2;i++){
+		// 		for(int j =-1; j<2;j++){
+		// 			if(i || j)		out.emplace_back(getx()+i,gety()+j);
+		// 		}
+		// 	}
 			return out;
 		}
 };
@@ -98,32 +99,111 @@ class Queen : public piece
 {
 	public :
 		Queen( bool blk_or_white, int piece_type, int x, int y) : piece(blk_or_white, piece_type, x, y)
-		{}
+		{
+			next = nullptr;
+		}
 
+		Queen* next;
 		vector<pos>  possible_moves(int grid[8][8])	 {
 
 			vector<pos> out;
 
-			int tmpX = getx();
-			int tmpY = gety();
+			int posX = getx();
+			int posY = gety();
 			int flag = 1;
 
-			for(int i = tmpY+1; i<8;i++){
-				for(int j = tmpX+1; j<8;j++){
-					out.emplace_back((i,j));
-					
-					if(i == j && flag) {
-						out.emplace_back();
+
+			// X axis
+			for(int i = posX+1; i<8 && flag; i++){
+				if (grid[i][posY] == -1)
+				{
+					out.emplace_back(i,posY);
+				}
+				else{
+
+					if(grid[i][posY] * getType() < 0)	out.emplace_back(i, posY);
+
+					flag = 0;
+				}
+
+			}
+
+			flag = 1;
+			for(int i = posX-1; i>=0 && flag; i--){
+				if (grid[i][posY] == -1)
+				{
+					out.emplace_back(i,posY);
+				}
+				else{
+
+					if(grid[i][posY] * getType() < 0)	out.emplace_back(i, posY);
+
+					flag = 0;
+				}
+
+			}
+
+			// Y axis
+			flag = 1;
+			for(int i = posY+1; i<8 && flag; i++){
+				if (grid[posX][i] == -1)
+				{
+					out.emplace_back(posX,i);
+				}
+				else{
+
+					if(grid[posX][i] * getType() < 0)	out.emplace_back(posX,i);
+
+					flag = 0;
+				}
+
+			}
+
+			flag = 1;
+			for(int i = posY-1; i>=0 && flag; i--){
+				if (grid[posX][i] == -1)
+				{
+					out.emplace_back(posX,i);
+				}
+				else{
+
+					if(grid[posX][i] * getType() < 0)	out.emplace_back(posX,i);
+
+					flag = 0;
+				}
+
+			}
+
+			// Positive X==Y side
+			flag = 1;
+			for(int i = posY+1, j = posX+1;  i<8 && j<8 && flag;){
+
+					if(grid[i][j] == -1){
+						out.emplace_back(i,j);
 					}
-					if(grid[i][j])	break;
-				}
-				if(grid[tmpX+i][tmpY+j])	break;
+					else{
+						flag = 0;
+					}
+
+					i++;
+					j++;
 			}
-			for(int i = 1; i<tmpY;i++){
-				for(int j = 1; j<tmpX; j++){
-					out.emplace_back((tmpX-i,tmpY-j));
-				}
+
+			// Negative X==Y side
+			flag = 1;
+			for(int i = posY-1, j = posX-1;  i>=0 && j>=0 && flag;){
+
+					if(grid[i][j] == -1){
+						out.emplace_back(i,j);
+					}
+					else{
+						flag = 0;
+					}
+
+					i--;
+					j--;
 			}
+
 			return out;
 		}
 };
@@ -131,25 +211,29 @@ class Rook : public piece
 {
 	public :
 		Rook( bool blk_or_white, int piece_type, int x, int y) : piece(blk_or_white, piece_type, x, y)
-		{}
+		{
+			next = nullptr;
+		}
+
+		Rook* next;
 		vector<pos>  possible_moves(int grid[8][8])	 {
 
 			vector<pos> out;
-			int tmpX = getx();
-			int tmpY = gety();
+		// 	int tmpX = getx();
+		// 	int tmpY = gety();
 
-			for(int i = tmpY+1; i<8;i++){
-				for(int j = tmpX+1; j<8;j++){
-					out.emplace_back((i,j));
-					if(grid[i][j])	break;
-				}
-				if(grid[tmpX+i][tmpY+j])	break;
-			}
-			for(int i = 1; i<tmpY;i++){
-				for(int j = 1; j<tmpX; j++){
-					out.emplace_back((tmpX-i,tmpY-j));
-				}
-			}
+		// 	for(int i = tmpY+1; i<8;i++){
+		// 		for(int j = tmpX+1; j<8;j++){
+		// 			out.emplace_back((i,j));
+		// 			if(grid[i][j])	break;
+		// 		}
+		// 		if(grid[tmpX+i][tmpY+j])	break;
+		// 	}
+		// 	for(int i = 1; i<tmpY;i++){
+		// 		for(int j = 1; j<tmpX; j++){
+		// 			out.emplace_back((tmpX-i,tmpY-j));
+		// 		}
+		// 	}
 
 			return out;
 		}
@@ -158,7 +242,11 @@ class Bishop : public piece
 {
 	public :
 		Bishop( bool blk_or_white, int piece_type, int x, int y) : piece(blk_or_white, piece_type, x, y)
-		{}
+		{
+			next = nullptr;
+		}
+
+		Bishop* next;
 		vector<pos>  possible_moves(int grid[8][8])	 {
 
 			vector<pos> out;
@@ -174,7 +262,11 @@ class Knight : public piece
 {
 	public :
 		Knight( bool blk_or_white, int piece_type, int x, int y) : piece(blk_or_white, piece_type, x, y)
-		{}
+		{
+			next = nullptr;
+		}
+
+		Knight* next;
 		vector<pos>  possible_moves(int grid[8][8])	 {
 
 			vector<pos> out;
@@ -190,7 +282,11 @@ class Pawn : public piece
 {
 	public :
 		Pawn( bool blk_or_white, int piece_type, int x, int y) : piece(blk_or_white, piece_type, x, y)
-		{}
+		{
+			next = nullptr;
+		}
+
+		Pawn* next;
 		vector<pos>  possible_moves(int grid[8][8])	 {
 
 			vector<pos> out;
