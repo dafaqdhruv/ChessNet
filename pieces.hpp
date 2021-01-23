@@ -65,7 +65,13 @@ class piece {
 
 	int getType(){	return (affiliation) ? (type) : (-1 * type);	}
 
-	void move();
+	void move(pos to, int grid[8][8]){
+
+		grid[posx][posy] = 0;
+		posx = to.x;
+		posy = to.y;
+	}
+
 	void die();
 
 };
@@ -84,17 +90,24 @@ class King : public piece
 
 			vector<pos> out;
 
-		// 	int tmpX = getx();
-		// 	int tmpY = gety();
+			int tmpX = getx();
+			int tmpY = gety();
 			
-		// 	for(int i = -1;i<2;i++){
-		// 		for(int j =-1; j<2;j++){
-		// 			if(i || j)		out.emplace_back(getx()+i,gety()+j);
-		// 		}
-		// 	}
+			for(int i = -1;i<2;i++){
+				for(int j =-1; j<2;j++){
+					if(i || j)	out.emplace_back(tmpX+i,tmpY+j);
+				}
+			}
 			return out;
 		}
+
+		bool isMoveValid(pos to){
+			 return false;
+		}
 };
+
+
+
 class Queen : public piece
 {
 	public :
@@ -111,63 +124,83 @@ class Queen : public piece
 			int posX = getx();
 			int posY = gety();
 			int flag = 1;
+			int count = 1;
 
+			cout<<'\t';
+			// cout<<count++<<"MOTHERFUCKER"<<posX<<posY<<flag;
 
 			// X axis
 			for(int i = posX+1; i<8 && flag; i++){
-				if (grid[i][posY] == -1)
+				if (grid[i][posY] == 0)
 				{
 					out.emplace_back(i,posY);
+					cout<<count++<<")\t"<<(char)(i+97)<<posY+1<<"\n\t";
 				}
 				else{
 
-					if(grid[i][posY] * getType() < 0)	out.emplace_back(i, posY);
+					if(grid[i][posY] * getType() < 0){
+						out.emplace_back(i, posY);						
+						cout<<count++<<")\t"<<(char)(i+97)<<posY+1<<"\n\t";
+					}	
 
 					flag = 0;
 				}
-
 			}
 
 			flag = 1;
 			for(int i = posX-1; i>=0 && flag; i--){
-				if (grid[i][posY] == -1)
+				if (grid[i][posY] == 0)
 				{
+					cout<<count++<<")\t"<<(char)(i+97)<<posY+1<<"\n\t";
 					out.emplace_back(i,posY);
 				}
 				else{
 
-					if(grid[i][posY] * getType() < 0)	out.emplace_back(i, posY);
+					if(grid[i][posY] * getType() < 0){
+						out.emplace_back(i, posY);
+						cout<<count++<<")\t"<<(char)(i+97)<<posY+1<<"\n\t";
+					}
 
 					flag = 0;
 				}
-
 			}
 
 			// Y axis
 			flag = 1;
 			for(int i = posY+1; i<8 && flag; i++){
-				if (grid[posX][i] == -1)
+				if (grid[posX][i] == 0)
 				{
-					out.emplace_back(posX,i);
+					cout<<count++<<")\t"<<(char)(posX+97)<<i+1<<"\n\t";
+						// cout<<count++<<")\t"<<(char)(posX+97)<<i+1<<" "<<grid[posX][i]<<getType()<<"\n\t";
+					out.emplace_back(posX,i);	
 				}
 				else{
 
-					if(grid[posX][i] * getType() < 0)	out.emplace_back(posX,i);
+					if(grid[posX][i] * getType() < 0){
+						cout<<count++<<")\t"<<(char)(posX+97)<<i+1<<"\n\t";
+						// cout<<count++<<")\t"<<(char)(posX+97)<<i+1<<" "<<grid[posX][i]<<getType()<<"\n";
+						out.emplace_back(posX,i);
+					}
 
 					flag = 0;
 				}
-
 			}
 
 			flag = 1;
 			for(int i = posY-1; i>=0 && flag; i--){
-				if (grid[posX][i] == -1)
+				if (grid[posX][i] == 0)
 				{
+						// cout<<count++<<")\t"<<(char)(posX+97)<<i+1<<" "<<grid[posX][i] * getType()<<"\n\t";
+					cout<<count++<<")\t"<<(char)(posX+97)<<i+1<<"\n\t";
 					out.emplace_back(posX,i);
 				}
 				else{
 
-					if(grid[posX][i] * getType() < 0)	out.emplace_back(posX,i);
+					if(grid[posX][i] * getType() < 0){
+						out.emplace_back(posX,i);
+					cout<<count++<<")\t"<<(char)(posX+97)<<i+1<<"\n\t";
+						// cout<<count++<<")\t"<<(char)(posX+97)<<i+1<<" "<<grid[posX][i] * getType()<<"\n\t";
+					}
 
 					flag = 0;
 				}
@@ -178,7 +211,8 @@ class Queen : public piece
 			flag = 1;
 			for(int i = posY+1, j = posX+1;  i<8 && j<8 && flag;){
 
-					if(grid[i][j] == -1){
+					if(grid[i][j] == 0){
+						cout<<count++<<")\t"<<(char)(i+97)<<j+1<<"\n\t";
 						out.emplace_back(i,j);
 					}
 					else{
@@ -193,7 +227,8 @@ class Queen : public piece
 			flag = 1;
 			for(int i = posY-1, j = posX-1;  i>=0 && j>=0 && flag;){
 
-					if(grid[i][j] == -1){
+					if(grid[i][j] == 0){
+						cout<<count++<<")\t"<<(char)(i+97)<<j+1<<"\n\t";
 						out.emplace_back(i,j);
 					}
 					else{
@@ -206,6 +241,86 @@ class Queen : public piece
 
 			return out;
 		}
+
+
+
+		bool isMoveValid(pos to, int grid[8][8]){
+
+			bool flag = true;
+			if(to.x == getx()){}
+			else if( to.y == gety()){
+				
+			}
+			else if( to.x > getx()){
+
+				if(to.x-getx() == to.y-gety()){		// 1st quadrant
+					
+					for(int i = getx()+1, j = gety()+1; i<=to.x;){
+
+						if(grid[i][j] != 0)	{
+							if(grid[i][posY] * getType() > 0)
+								flag = false;
+							break;
+						}
+						i++;
+						j++;
+
+					}
+				}
+				else if (to.x-getx() == gety()-to.y){					// 4th quadrant
+
+					for(int i = getx()+1, j = gety()-1; i<=to.x;){
+
+						if(grid[i][j] != 0)	{
+							if(grid[i][posY] * getType() > 0)
+								flag = false;
+							break;
+						}
+						i++;
+						j--;
+
+					}
+				}
+				else return false;		// random slop val
+			}
+
+			else {
+				if(to.x-getx() == gety()-to.y){		// 2nd quadrant
+					
+					for(int i = getx()-1, j = gety()+1; i>=to.x;){
+
+						if(grid[i][j] != 0)	{
+							if(grid[i][posY] * getType() > 0)
+								flag = false;
+							break;
+						}
+						i--;
+						j++;
+
+					}
+				}
+				else if (to.x-getx() == to.y-gety()){					// 3rd quadrant
+
+					for(int i = getx()-1, j = gety()-1; i>=to.x;){
+
+						if(grid[i][j] != 0)	{
+							if(grid[i][posY] * getType() > 0)
+								flag = false;
+							break;
+						}
+						i--;
+						j--;
+
+					}
+				}
+				else return false;		// random slop val
+			}
+
+
+
+			return flag;
+		}
+
 };
 class Rook : public piece
 {
@@ -219,23 +334,28 @@ class Rook : public piece
 		vector<pos>  possible_moves(int grid[8][8])	 {
 
 			vector<pos> out;
-		// 	int tmpX = getx();
-		// 	int tmpY = gety();
+			// 	int tmpX = getx();
+			// 	int tmpY = gety();
 
-		// 	for(int i = tmpY+1; i<8;i++){
-		// 		for(int j = tmpX+1; j<8;j++){
-		// 			out.emplace_back((i,j));
-		// 			if(grid[i][j])	break;
-		// 		}
-		// 		if(grid[tmpX+i][tmpY+j])	break;
-		// 	}
-		// 	for(int i = 1; i<tmpY;i++){
-		// 		for(int j = 1; j<tmpX; j++){
-		// 			out.emplace_back((tmpX-i,tmpY-j));
-		// 		}
-		// 	}
+			// 	for(int i = tmpY+1; i<8;i++){
+			// 		for(int j = tmpX+1; j<8;j++){
+			// 			out.emplace_back((i,j));
+			// 			if(grid[i][j])	break;
+			// 		}
+			// 		if(grid[tmpX+i][tmpY+j])	break;
+			// 	}
+			// 	for(int i = 1; i<tmpY;i++){
+			// 		for(int j = 1; j<tmpX; j++){
+			// 			out.emplace_back((tmpX-i,tmpY-j));
+			// 		}
+			// 	}
 
 			return out;
+		}
+
+
+		bool isMoveValid(pos to){
+			 return false;
 		}
 };
 class Bishop : public piece
@@ -257,6 +377,11 @@ class Bishop : public piece
 			}
 			return out;
 		}
+
+
+		bool isMoveValid(pos to){
+			 return false;
+		}
 };
 class Knight : public piece
 {
@@ -277,6 +402,11 @@ class Knight : public piece
 			}
 			return out;
 		}
+
+
+		bool isMoveValid(pos to){
+			 return false;
+		}
 };
 class Pawn : public piece
 {
@@ -296,5 +426,10 @@ class Pawn : public piece
 				}
 			}
 			return out;
+		}
+
+
+		bool isMoveValid(pos to){
+			 return false;
 		}
 };

@@ -53,12 +53,13 @@ int piece_at_pos(int num){
 	return 999;
 }
 
-string piece_name(int type){
-
-	switch(type){
-		case  0 : 	return " __ ";
-		case  6	:
-		case -6	:	return "Pawn";
+string piece_name(int type){			//						 --	 --	 @@	 --  --
+										//						 ##	 --	 @@	 --  ##	
+	switch(type){						//						 --	 ##	 @@  ##  --
+		case  42:	return " @@ ";		// Highlight case		 @@	 @@ Quen @@  @@
+		case  0 : 	return " __ ";		//						 --	 ##	 @@	 ##  --
+		case  6	:						//						 ##	 --	 @@	 --	 ##
+		case -6	:	return "Pawn";		//						 --  --  @@  --  --
 		case  5	:
 		case -5	:	return "Bish";
 		case  4	:
@@ -83,7 +84,7 @@ void copy_list(PP* temp, int grid[8][8]){
 		x = temp->getx();
 		y = temp->gety();
 
-		grid[x][y] = temp->getType();
+		grid[x][y] = temp->getType();										//	STORING [X][Y]??			
 		temp = temp->next;
 	} 
 }
@@ -96,20 +97,21 @@ void copy_list(PP* temp, int grid[8][8]){
 void print_grid(bool affiliation, player* White, player* Black, int board[8][8]){
 	cls
 
-	copy_list(White->getKing(),board);
-	copy_list(White->getQueen(),board);
-	copy_list(White->getRook(),board);
-	copy_list(White->getKnight(),board);
-	copy_list(White->getBishop(),board);
-	copy_list(White->getPawn(),board);
+	if(White==nullptr || Black==nullptr){
+		copy_list(White->getKing(),board);
+		copy_list(White->getQueen(),board);
+		copy_list(White->getRook(),board);
+		copy_list(White->getKnight(),board);
+		copy_list(White->getBishop(),board);
+		copy_list(White->getPawn(),board);
 
-	copy_list(Black->getKing(),board);
-	copy_list(Black->getQueen(),board);
-	copy_list(Black->getRook(),board);
-	copy_list(Black->getKnight(),board);
-	copy_list(Black->getBishop(),board);
-	copy_list(Black->getPawn(),board);
-
+		copy_list(Black->getKing(),board);
+		copy_list(Black->getQueen(),board);
+		copy_list(Black->getRook(),board);
+		copy_list(Black->getKnight(),board);
+		copy_list(Black->getBishop(),board);
+		copy_list(Black->getPawn(),board);
+	}
 
 	string cols = 	"\t\ta\tb\tc\td\te\tf\tg\th    \n\n";
 
@@ -122,7 +124,7 @@ void print_grid(bool affiliation, player* White, player* Black, int board[8][8])
 			cout<<"\t"<<x+1<<"  ";
 
 			for( int y = 0; y<8; y++){
-				cout<<"  "<<piece_name(board[y][x])<<"  ";
+				cout<<"  "<<piece_name(board[y][x])<<"  ";						// PRINTING [Y][X] FOR VERTICAL BOARD // DATA STORED IN X,Y FORMAT THO
 			}
 			cout<<" "<<x+1<<" \n\n\n";
 		}	
@@ -135,11 +137,22 @@ void print_grid(bool affiliation, player* White, player* Black, int board[8][8])
 			cout<<"\t"<<x+1<<"  ";
 
 			for( int y = 0; y<8; y++){
-				cout<<"  "<<piece_name(board[y][x])<<"  ";
+				cout<<"  "<<piece_name(board[y][x])<<"  ";						// PRINTING [Y][X] FOR VERTICAL BOARD 
 			}
 			cout<<" "<<x+1<<" \n\n\n";
 		}
 	}
 
 	cout << cols;
+
+
+
+	// PRINT  TYPE WISE
+	// for(int i = 0; i< 8; i++){
+	// 	for(int j = 0; j<8; j++){
+
+	// 		cout<<" \t"<<board[j][i];
+	// 	}
+	// 	cout<<endl;
+	// }
 }

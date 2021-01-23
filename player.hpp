@@ -62,16 +62,44 @@ class player {
 
 
 	template <class PP>
-	void print_all_locations(PP* head, int grid[8][8]){
+	void show_all_pieces(PP* head, int grid[8][8]){
+		vector <pos> temp;
 		while(head != nullptr){
 
-			cout<<"\t"<<(char)(head->getx()+97)<<head->gety()<<"\t\t";
-			head->possible_moves(grid);
-			cout<<'\n';
+			cout<<"\t"<<(char)(head->getx()+97)<<head->gety()+1<<"\n";
 			head = head->next;
 
 		}
 	}
+
+	template<class PP>
+	PP* getPieceByIndex(PP* head, int pos){
+
+		cout<<pos<<endl;
+		for(int i = 1; i < pos  && head!=nullptr; i++){
+			cout<<"YEEt"<<endl;
+			head = head->next;
+		}
+
+		cout<<head->getx()<<" "<<head->gety()<<endl;
+		return head;
+	}
+
+	template<class PP>
+	PP* getPieceByPos(PP* head, pos place){
+
+		while(head != nullptr){
+			
+			if(head->getx() == place.x){
+				if(head->gety() == place.y){
+					return head;
+				}
+			}
+			head = head->next;
+		}
+		return nullptr;
+	}
+
 
 	void set_pieces(bool affiliation){
 
@@ -80,6 +108,7 @@ class player {
 
 			insert_pieces(&K, 4, 0, 1, 1);
 			insert_pieces(&Q, 3, 0 ,1, 2);
+																	insert_pieces(&Q, 3, 3,1, 2); 	// TEST 
 			insert_pieces(&R, 0, 0 ,1, 3);
 			insert_pieces(&R, 7, 0 ,1, 3);
 			insert_pieces(&N, 1, 0,1, 4);

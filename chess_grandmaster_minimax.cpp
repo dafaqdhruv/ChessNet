@@ -28,7 +28,11 @@ int main(){
 
 	// set_board();
 	print_grid(input, white, black, board);
-	parse_input(white,grid);	
+
+	input_player_move(white,board);	
+	// print_grid(input, white, black, board);
+	
+	// parse_input(black,grid);	
 	// input = game(input, weight);
 
 
