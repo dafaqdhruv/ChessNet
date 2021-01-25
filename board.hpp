@@ -97,7 +97,7 @@ void copy_list(PP* temp, int grid[8][8]){
 void print_grid(bool affiliation, player* White, player* Black, int board[8][8]){
 	cls
 
-	if(White==nullptr || Black==nullptr){
+	if(White!=nullptr && Black!=nullptr){
 		copy_list(White->getKing(),board);
 		copy_list(White->getQueen(),board);
 		copy_list(White->getRook(),board);
@@ -112,6 +112,10 @@ void print_grid(bool affiliation, player* White, player* Black, int board[8][8])
 		copy_list(Black->getBishop(),board);
 		copy_list(Black->getPawn(),board);
 	}
+
+	// if(list != nullptr){
+	// 	copy_list(list,board);
+	// }
 
 	string cols = 	"\t\ta\tb\tc\td\te\tf\tg\th    \n\n";
 

@@ -67,6 +67,7 @@ class piece {
 
 	void move(pos to, int grid[8][8]){
 
+		grid[to.x][to.y] = grid[posx][posy];
 		grid[posx][posy] = 0;
 		posx = to.x;
 		posy = to.y;
@@ -101,7 +102,7 @@ class King : public piece
 			return out;
 		}
 
-		bool isMoveValid(pos to){
+		bool isMoveValid(pos to, int grid[8][8]){
 			 return false;
 		}
 };
@@ -258,7 +259,7 @@ class Queen : public piece
 					for(int i = getx()+1, j = gety()+1; i<=to.x;){
 
 						if(grid[i][j] != 0)	{
-							if(grid[i][posY] * getType() > 0)
+							if(grid[i][j] * getType() > 0)
 								flag = false;
 							break;
 						}
@@ -272,7 +273,7 @@ class Queen : public piece
 					for(int i = getx()+1, j = gety()-1; i<=to.x;){
 
 						if(grid[i][j] != 0)	{
-							if(grid[i][posY] * getType() > 0)
+							if(grid[i][j] * getType() > 0)
 								flag = false;
 							break;
 						}
@@ -290,7 +291,7 @@ class Queen : public piece
 					for(int i = getx()-1, j = gety()+1; i>=to.x;){
 
 						if(grid[i][j] != 0)	{
-							if(grid[i][posY] * getType() > 0)
+							if(grid[i][j] * getType() > 0)			/// POSSIBLE ERROR LOGIC :: IF A PIECE APPEARS BEFORE to.x,to.y VALUE IS TRU/FLAS
 								flag = false;
 							break;
 						}
@@ -304,7 +305,7 @@ class Queen : public piece
 					for(int i = getx()-1, j = gety()-1; i>=to.x;){
 
 						if(grid[i][j] != 0)	{
-							if(grid[i][posY] * getType() > 0)
+							if(grid[i][j] * getType() > 0)
 								flag = false;
 							break;
 						}
@@ -354,7 +355,7 @@ class Rook : public piece
 		}
 
 
-		bool isMoveValid(pos to){
+		bool isMoveValid(pos to, int grid[8][8]){
 			 return false;
 		}
 };
@@ -379,7 +380,7 @@ class Bishop : public piece
 		}
 
 
-		bool isMoveValid(pos to){
+		bool isMoveValid(pos to, int grid[8][8]){
 			 return false;
 		}
 };
@@ -404,7 +405,7 @@ class Knight : public piece
 		}
 
 
-		bool isMoveValid(pos to){
+		bool isMoveValid(pos to, int grid[8][8]){
 			 return false;
 		}
 };
@@ -429,7 +430,7 @@ class Pawn : public piece
 		}
 
 
-		bool isMoveValid(pos to){
+		bool isMoveValid(pos to, int grid[8][8]){
 			 return false;
 		}
 };

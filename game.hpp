@@ -24,13 +24,21 @@ void choose_move(PP* piece, int grid[8][8], int new_val = 0){
 	vector<pos> temp = piece->possible_moves(grid);
 	pos shift_to;
 
-	print_grid((piece->getType()>0) ? 1 : 0, nullptr, nullptr, grid);
+	cout<<"MOTHERFUCKER I STUBBED MY TOE";
+	// if(piece->getType()>0)
+	// 	print_grid( 1, nullptr, nullptr, grid);
+	// else 
+	// 	print_grid( 0, nullptr, nullptr, grid);
 
 	cin>>input;
 	shift_to = temp.at(input-1);
 
 	piece->move(shift_to,grid);
-	print_grid((piece->getType()>0) ? 1 : 0, nullptr, nullptr, grid);
+
+	if(piece->getType()>0)
+		print_grid( 1, nullptr, nullptr, grid);
+	else 
+		print_grid( 0, nullptr, nullptr, grid);
 
 }
 
@@ -41,7 +49,7 @@ void parse_input(player* Player, int grid[8][8]){
 	pos from, to;
 	
 	cout<<"Enter Piece, original pos, new pos (example -> K e6 f5) :\n\t";
-	scanf("%c %c%c %c%c",piece, beforeX,beforeY, afterX,afterY);
+	scanf("%c %c%c %c%c", &piece, &beforeX, &beforeY, &afterX, &afterY);
 
 	toLower(beforeX);
 	toLower(afterX);
