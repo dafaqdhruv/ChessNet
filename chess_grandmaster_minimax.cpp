@@ -28,13 +28,8 @@ int main(){
 
 	// set_board();
 	print_grid(input, white, black, board);
-
-	input_player_move(white,board);	
-	// print_grid(input, white, black, board);
 	
-	// parse_input(black,grid);	
-	// input = game(input, weight);
-
+	game(input, white,black,board);
 
 
 	cout<<"You "<< (input ? "Won!!" : "lost :/") << "\n";

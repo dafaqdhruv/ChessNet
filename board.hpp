@@ -6,7 +6,8 @@
 
 using namespace std;
 
-#define cls cout<<"\033[2J"<<"\n";
+#define cls cout<<"\n\n\n"<<"\n";	
+// #define cls cout<<"\033[2J"<<"\n";	
 
 
 
@@ -53,23 +54,23 @@ int piece_at_pos(int num){
 	return 999;
 }
 
-string piece_name(int type){			//						 --	 --	 @@	 --  --
-										//						 ##	 --	 @@	 --  ##	
-	switch(type){						//						 --	 ##	 @@  ##  --
-		case  42:	return " @@ ";		// Highlight case		 @@	 @@ Quen @@  @@
-		case  0 : 	return " __ ";		//						 --	 ##	 @@	 ##  --
-		case  6	:						//						 ##	 --	 @@	 --	 ##
-		case -6	:	return "Pawn";		//						 --  --  @@  --  --
-		case  5	:
-		case -5	:	return "Bish";
-		case  4	:
-		case -4	:	return "Kni8";
-		case  3	:
-		case -3	:	return "Rook";
-		case  2	:
-		case -2	:	return "Quen";
-		case  1	:
-		case -1	:	return "King";
+string piece_name(int type){				//						 --	 --	 @@	 --  --
+											//						 ##	 --	 @@	 --  ##	
+	switch(type){							//						 --	 ##	 @@  ##  --
+		case  42:	return "  @@  ";		// Highlight case		 @@	 @@ Quen @@  @@
+		case  0 : 	return "  __  ";		//						 --	 ##	 @@	 ##  --
+		case  6	:	return "W_Pawn";		//						 ##	 --	 @@	 --	 ##
+		case -6	:	return "B_Pawn";		//						 --  --  @@  --  --
+		case  5	:	return "W_Bish";
+		case -5	:	return "B_Bish";
+		case  4	:	return "W_Kni8";
+		case -4	:	return "B_Kni8";
+		case  3	:	return "W_Rook";
+		case -3	:	return "B_Rook";
+		case  2	:	return "W_Quen";
+		case -2	:	return "B_Quen";
+		case  1	:	return "W_King";
+		case -1	:	return "B_King";
 	}
 	return "err0";
 }
@@ -117,7 +118,7 @@ void print_grid(bool affiliation, player* White, player* Black, int board[8][8])
 	// 	copy_list(list,board);
 	// }
 
-	string cols = 	"\t\ta\tb\tc\td\te\tf\tg\th    \n\n";
+	string cols = 	"\t\ta         b         c         d         e         f         g         h\n\n";
 
 	cout << cols;
 

@@ -31,12 +31,13 @@ public:
 
 class piece {
 
-	int posx;
-	int posy;
 
 	int type;
-	bool affiliation;												// True for white  False for Black
 	
+	protected :
+		bool affiliation;												// True for white  False for Black
+		int posx;
+		int posy;
 
 	public :
 
@@ -72,9 +73,6 @@ class piece {
 		posx = to.x;
 		posy = to.y;
 	}
-
-	void die();
-
 };
 
 class King : public piece
@@ -83,10 +81,12 @@ class King : public piece
 		King( bool blk_or_white, int piece_type, int x, int y) : piece(blk_or_white, piece_type, x, y)
 		{
 			next = nullptr;
-
+			prev = nullptr;
 		}
 
 		King* next;
+		King* prev;
+
 		vector<pos>  possible_moves(int grid[8][8]){
 
 			vector<pos> out;
@@ -103,8 +103,28 @@ class King : public piece
 		}
 
 		bool isMoveValid(pos to, int grid[8][8]){
-			 return false;
+
+			int flag = true;
+
+			if(to.x-posx == 1 || to.x-posx == -1){
+				if( to.y-posy == 1 || to.y-posy == -1){
+					if(grid[to.x][to.y] * getType() <= 0)	return true;
+					else cout<<"Invalid move due to presence of same team piece at target.";
+				}
+			}
+
+			cout<<"Invalid move";
+			return false;
 		}
+
+
+		bool isKillShot(pos to, int grid[8][8]){
+
+			if(grid[to.x][to.y]*getType() < 0)	return true;
+			else return false;
+		}
+
+		void die();
 };
 
 
@@ -115,9 +135,12 @@ class Queen : public piece
 		Queen( bool blk_or_white, int piece_type, int x, int y) : piece(blk_or_white, piece_type, x, y)
 		{
 			next = nullptr;
+			prev = nullptr;
 		}
 
 		Queen* next;
+		Queen* prev;
+
 		vector<pos>  possible_moves(int grid[8][8])	 {
 
 			vector<pos> out;
@@ -248,20 +271,59 @@ class Queen : public piece
 		bool isMoveValid(pos to, int grid[8][8]){
 
 			bool flag = true;
-			if(to.x == getx()){}
-			else if( to.y == gety()){
-				
+
+			if(grid[to.x][to.y] * getType() > 0)	{cout<<"Invalid move due to presence of same team piece at target.";return false;}		// CHECK FOR SAME TEAM PIECE AT POS
+
+			// Moved in Y axis
+			if(to.x == getx()){
+				if( gety() < to.y ){
+					for(int i = gety()+1; i<to.y; i++){
+						if(grid[getx()][i] != 0)	{
+							cout<<"Invlaid move due to Path blocked by other piece.";
+							return false;
+						}
+					}
+				}	
+				else {
+					for(int i = gety()-1; i>to.y; i--){
+						if(grid[getx()][i] != 0)	{
+							cout<<"Invlaid move due to Path blocked by other piece.";
+							return false;
+						}
+					}
+				}
 			}
+
+			// Moved in X axis
+			else if( to.y == gety()){
+				if( getx() < to.x ){
+					for(int i = getx()+1; i<to.x; i++){
+						if(grid[i][gety()] != 0)	{
+							cout<<"Invlaid move due to Path blocked by other piece.";
+							return false;
+						}
+					}
+				}	
+				else {
+					for(int i = getx()-1; i>to.x; i--){
+						if(grid[i][gety()] != 0)	{
+							cout<<"Invlaid move due to Path blocked by other piece.";
+							return false;
+						}
+					}
+				}	
+			}
+
+			// Moved to the right not on axes
 			else if( to.x > getx()){
 
 				if(to.x-getx() == to.y-gety()){		// 1st quadrant
 					
-					for(int i = getx()+1, j = gety()+1; i<=to.x;){
+					for(int i = getx()+1, j = gety()+1; i<to.x;){
 
 						if(grid[i][j] != 0)	{
-							if(grid[i][j] * getType() > 0)
-								flag = false;
-							break;
+							cout<<"Invlaid move due to Path blocked by other piece.";
+							return false;
 						}
 						i++;
 						j++;
@@ -270,30 +332,30 @@ class Queen : public piece
 				}
 				else if (to.x-getx() == gety()-to.y){					// 4th quadrant
 
-					for(int i = getx()+1, j = gety()-1; i<=to.x;){
+					for(int i = getx()+1, j = gety()-1; i<to.x;){
 
 						if(grid[i][j] != 0)	{
-							if(grid[i][j] * getType() > 0)
-								flag = false;
-							break;
+							cout<<"Invlaid move due to Path blocked by other piece.";
+							return false;
 						}
 						i++;
 						j--;
 
 					}
 				}
-				else return false;		// random slop val
+				else { cout<<"Invalid move due to Not diagonal"; return false;}		// random slop val
 			}
 
+
+			// Moved to the left not on axes
 			else {
 				if(to.x-getx() == gety()-to.y){		// 2nd quadrant
 					
-					for(int i = getx()-1, j = gety()+1; i>=to.x;){
+					for(int i = getx()-1, j = gety()+1; i>to.x;){
 
 						if(grid[i][j] != 0)	{
-							if(grid[i][j] * getType() > 0)			/// POSSIBLE ERROR LOGIC :: IF A PIECE APPEARS BEFORE to.x,to.y VALUE IS TRU/FLAS
-								flag = false;
-							break;
+							cout<<"Invlaid move due to Path blocked by other piece.";
+							return false;
 						}
 						i--;
 						j++;
@@ -302,26 +364,38 @@ class Queen : public piece
 				}
 				else if (to.x-getx() == to.y-gety()){					// 3rd quadrant
 
-					for(int i = getx()-1, j = gety()-1; i>=to.x;){
+					for(int i = getx()-1, j = gety()-1; i>to.x;){
 
 						if(grid[i][j] != 0)	{
-							if(grid[i][j] * getType() > 0)
-								flag = false;
-							break;
+							cout<<"Invlaid move due to Path blocked by other piece.";
+							return false;
 						}
 						i--;
 						j--;
 
 					}
 				}
-				else return false;		// random slop val
+				else { cout<<"Invalid move due to Not diagonal";return false;}		// random slop val
 			}
 
 
+			cout<<"FLAG IS "<<flag<<endl;		// prints only when wrong piece in between or when true.
 
 			return flag;
 		}
 
+
+		bool isKillShot(pos to, int grid[8][8]){
+
+			if(grid[to.x][to.y]*getType() < 0)	return true;
+			else return false;
+		}
+
+		void die(){
+			prev-> next = next;
+			if(next != nullptr) next->prev = prev;
+			cout<<"Quen Ded\n";
+		}
 };
 class Rook : public piece
 {
@@ -329,9 +403,12 @@ class Rook : public piece
 		Rook( bool blk_or_white, int piece_type, int x, int y) : piece(blk_or_white, piece_type, x, y)
 		{
 			next = nullptr;
+			prev = nullptr;
 		}
 
 		Rook* next;
+		Rook* prev;
+
 		vector<pos>  possible_moves(int grid[8][8])	 {
 
 			vector<pos> out;
@@ -356,7 +433,66 @@ class Rook : public piece
 
 
 		bool isMoveValid(pos to, int grid[8][8]){
-			 return false;
+			bool flag = true;
+
+			if(grid[to.x][to.y] * getType() > 0)	{cout<<"Invalid move due to presence of same team piece at target.";return false;}		// CHECK FOR SAME TEAM PIECE AT POS
+
+			// Moved in Y axis
+			if(to.x == getx()){
+				if( gety() < to.y ){
+					for(int i = gety()+1; i<to.y; i++){
+						if(grid[getx()][i] != 0)	{
+							cout<<"Invlaid move due to Path blocked by other piece.";
+							return false;
+						}
+					}
+				}	
+				else {
+					for(int i = gety()-1; i>to.y; i--){
+						if(grid[getx()][i] != 0)	{
+							cout<<"Invlaid move due to Path blocked by other piece.";
+							return false;
+						}
+					}
+				}
+			}
+
+			// Moved in X axis
+			else if( to.y == gety()){
+				if( getx() < to.x ){
+					for(int i = getx()+1; i<to.x; i++){
+						if(grid[i][gety()] != 0)	{
+							cout<<"Invlaid move due to Path blocked by other piece.";
+							return false;
+						}
+					}
+				}	
+				else {
+					for(int i = getx()-1; i>to.x; i--){
+						if(grid[i][gety()] != 0)	{
+							cout<<"Invlaid move due to Path blocked by other piece.";
+							return false;
+						}
+					}
+				}	
+			}
+
+			else cout<<"Invalid move for Rook.";
+			return false;
+		}
+
+
+		bool isKillShot(pos to, int grid[8][8]){
+
+			if(grid[to.x][to.y]*getType() < 0)	return true;
+			else return false;
+		}
+
+		void die(){
+
+			prev->next = next;
+			if(next != nullptr)	next->prev = prev;
+			cout<<"Rook Ded\n";
 		}
 };
 class Bishop : public piece
@@ -365,9 +501,12 @@ class Bishop : public piece
 		Bishop( bool blk_or_white, int piece_type, int x, int y) : piece(blk_or_white, piece_type, x, y)
 		{
 			next = nullptr;
+			prev = nullptr;
 		}
 
 		Bishop* next;
+		Bishop* prev;
+
 		vector<pos>  possible_moves(int grid[8][8])	 {
 
 			vector<pos> out;
@@ -381,7 +520,90 @@ class Bishop : public piece
 
 
 		bool isMoveValid(pos to, int grid[8][8]){
-			 return false;
+			bool flag = true;
+
+			if(grid[to.x][to.y] * getType() > 0)	{cout<<"Invalid move due to presence of same team piece at target.";return false;}		// CHECK FOR SAME TEAM PIECE AT POS
+
+			// Moved to the right not on axes
+			else if( to.x > getx()){
+
+				if(to.x-getx() == to.y-gety()){		// 1st quadrant
+					
+					for(int i = getx()+1, j = gety()+1; i<to.x;){
+
+						if(grid[i][j] != 0)	{
+							cout<<"Invlaid move due to Path blocked by other piece.";
+							return false;
+						}
+						i++;
+						j++;
+
+					}
+				}
+				else if (to.x-getx() == gety()-to.y){					// 4th quadrant
+
+					for(int i = getx()+1, j = gety()-1; i<to.x;){
+
+						if(grid[i][j] != 0)	{
+							cout<<"Invlaid move due to Path blocked by other piece.";
+							return false;
+						}
+						i++;
+						j--;
+
+					}
+				}
+				else { cout<<"Invalid move due to Not diagonal"; return false;}		// random slop val
+			}
+
+
+			// Moved to the left not on axes
+			else {
+				if(to.x-getx() == gety()-to.y){		// 2nd quadrant
+					
+					for(int i = getx()-1, j = gety()+1; i>to.x;){
+
+						if(grid[i][j] != 0)	{
+							cout<<"Invlaid move due to Path blocked by other piece.";
+							return false;
+						}
+						i--;
+						j++;
+
+					}
+				}
+				else if (to.x-getx() == to.y-gety()){					// 3rd quadrant
+
+					for(int i = getx()-1, j = gety()-1; i>to.x;){
+
+						if(grid[i][j] != 0)	{
+							cout<<"Invlaid move due to Path blocked by other piece.";
+							return false;
+						}
+						i--;
+						j--;
+
+					}
+				}
+				else { cout<<"Invalid move due to Not diagonal";return false;}		// random slop val
+			}
+
+			return flag;
+		}
+
+		
+		bool isKillShot(pos to, int grid[8][8]){
+
+			if(grid[to.x][to.y]*getType() < 0)	return true;
+			else return false;
+		}
+
+		void die(){
+
+			prev-> next = next;
+			if(next != nullptr)	next->prev = prev;
+			
+			cout<<"Bishop Ded\n";
 		}
 };
 class Knight : public piece
@@ -390,10 +612,13 @@ class Knight : public piece
 		Knight( bool blk_or_white, int piece_type, int x, int y) : piece(blk_or_white, piece_type, x, y)
 		{
 			next = nullptr;
+			prev = nullptr;
 		}
 
 		Knight* next;
-		vector<pos>  possible_moves(int grid[8][8])	 {
+		Knight* prev;
+
+		vector<pos>  possible_moves(int grid[8][8])	 {	
 
 			vector<pos> out;
 			for(int i = -1;i<2;i++){
@@ -405,8 +630,38 @@ class Knight : public piece
 		}
 
 
-		bool isMoveValid(pos to, int grid[8][8]){
-			 return false;
+		bool isMoveValid(pos to, int grid[8][8]){	///MAKE AFFILIATION CHECK SO AS TO NOT ALLOW MOVEMENT OF OPPONENT'S PIECE
+			bool flag = true;
+
+			if(grid[to.x][to.y] * getType() > 0)	{cout<<"Invalid move due to presence of same team piece at target.";return false;}		// CHECK FOR SAME TEAM PIECE AT POS
+
+			if(to.x-posx == 2 || to.x-posx ==-2){
+				if(to.y-posy == 1 || to.y-posy == -1){
+					return true;
+				}
+			}
+
+			else if(to.y-posy == 2 || to.y-posy == -2){
+				if(to.x-posx == 1 || to.x-posx ==-1){
+					return true;
+				}
+			}
+
+			cout<<"Invalid move for Knight.";
+			return false;
+		}
+
+		
+		bool isKillShot(pos to, int grid[8][8]){
+
+			if(grid[to.x][to.y]*getType() < 0)	return true;
+			else return false;
+		}
+
+		void die(){
+			prev-> next = next;
+			if(next != nullptr)	next->prev = prev;
+			cout<<"Knight Ded\n";
 		}
 };
 class Pawn : public piece
@@ -415,9 +670,12 @@ class Pawn : public piece
 		Pawn( bool blk_or_white, int piece_type, int x, int y) : piece(blk_or_white, piece_type, x, y)
 		{
 			next = nullptr;
+			prev = nullptr;
 		}
 
 		Pawn* next;
+		Pawn* prev;
+
 		vector<pos>  possible_moves(int grid[8][8])	 {
 
 			vector<pos> out;
@@ -431,6 +689,38 @@ class Pawn : public piece
 
 
 		bool isMoveValid(pos to, int grid[8][8]){
-			 return false;
+
+			bool flag = true;
+
+			if(grid[to.x][to.y] * getType() > 0)	{cout<<"Invalid move due to presence of same team piece at target.";return false;}		// CHECK FOR SAME TEAM PIECE AT POS
+
+			if(to.x == posx){
+				if(to.y-posy == 1 && affiliation)	return true;		// WHITE CASE
+
+				else if(to.y-posy == -1 && !affiliation)	return true;		// BLACK CASE
+
+				else if(to.y-posy == 2 && affiliation && posy == 1)	return true;
+				else 	if(to.y-posy == -2 && affiliation && posy == 6)	return true;
+			}
+			else if( to.x-posx ==1 || to.x-posx ==-1){
+				if(to.y-posy == 1 && affiliation && grid[to.x][to.y]*getType() < 0)	return true;		// WHITE CASE
+
+				if(to.y-posy == -1 && !affiliation && grid[to.x][to.y]*getType() < 0)	return true;		// BLACK CASE
+			}
+			else cout<<"Invalid move for Pawn.";
+			return false;
+		}
+
+		bool isKillShot(pos to, int grid[8][8]){
+
+			if(grid[to.x][to.y]*getType() < 0)	return true;
+			else return false;
+		}
+
+		void die(){
+
+			prev-> next = next;
+			if(next != nullptr)	 next->prev = prev;
+			cout<<"Pawn Ded\n";
 		}
 };
