@@ -46,8 +46,7 @@ protected:
 
 	// Called when a message arrives
 	virtual void OnMessage(std::shared_ptr<net::connection<CustomMsgTypes>> client, net::message<CustomMsgTypes>& msg)
-	{	
-		std::cout<<"yeet??\n";
+	{
 		switch (msg.header.id)
 		{
 		case CustomMsgTypes::ServerPing:
@@ -57,7 +56,7 @@ protected:
 			// Simply bounce message back to client
 			client->Send(msg);
 		}
-		break; 
+		break;
 
 		case CustomMsgTypes::MessageAll:
 		{

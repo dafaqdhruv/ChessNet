@@ -377,3 +377,12 @@ bool game(bool affiliation, player* White, player* Black, int board[8][8], int w
 }
 
 
+
+
+class gameclass : public net::clientinterface<GameMessage> {
+
+
+	bool onGameInit(/* depending on initiator or responder */){} //INIT CONNECTION AND READY THE GAME
+	
+
+};
