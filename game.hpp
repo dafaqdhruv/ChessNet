@@ -44,40 +44,50 @@ void choose_move(PP* piece, int grid[8][8], int new_val = 0){
 }
 
 
-string parse_input(player* Player, player* Enemy, int grid[8][8]){
+string parse_input(player* Player, player* Enemy, int grid[8][8], string msg="NULL"){
 
 	char input_piece, beforeX,beforeY, afterX,afterY;
 	std::string out = "";
 	pos from, to;
-	
-	cout<<"Enter Piece, original pos, new pos (example -> K e6 f5) :\n\t";
-	cin>>input_piece;
-	cin>>beforeX;
-	cin>>beforeY;
-	cin>>afterX;
-	cin>>afterY;
+		
+	if(msg=="NULL")
+	{
+		cout<<"Enter Piece, original pos, new pos (example -> K e6 f5) :\n\t";
+		cin>>input_piece;
+		cin>>beforeX;
+		cin>>beforeY;
+		cin>>afterX;
+		cin>>afterY;
 
-	out+=input_piece;
-	out+=beforeX;
-	out+=beforeY;
-	out+=afterX;
-	out+=afterY;
-	// scanf("%c %c%c %c%c", &input_piece, &beforeX, &beforeY, &afterX, &afterY);
-
-	cout<<input_piece<<beforeX<<beforeY<<afterX<<afterY<<endl;
-	cout<<out<<endl;
-
-	toLower(beforeX);
-	toLower(afterX);
-
-	from.x = beforeX-97;	// TRANSLATION FROM a-h TO 0-7	
-	to.x = afterX-97;		// TRANSLATION FROM a-h TO 0-7
-
-	from.y = beforeY-49;	// TRANSLATION FROM 1-8 TO 0-7
-	to.y = afterY-49;		// TRANSLATION FROM 1-8 TO 0-7
-	cout<<from.x<<from.y<<to.x<<to.y<<grid[from.x][from.y]<<grid[to.x][to.y]<<endl;
+		// scanf("%c %c%c %c%c", &input_piece, &beforeX, &beforeY, &afterX, &afterY);
+		cout<<input_piece<<beforeX<<beforeY<<afterX<<afterY<<endl;
+		cout<<out<<endl;
 
 
+		toLower(beforeX);
+		toLower(afterX);
+
+		out+=input_piece;
+		out+=beforeX;		// translation for characters and
+		out+=beforeY;
+		out+=afterX;
+		out+=afterY;
+	}
+	else{
+		input_piece = msg[0];
+		beforeX = msg[1];
+		beforeY = msg[2];
+		afterX = msg[3];
+		afterY = msg[4];
+	}
+
+
+		from.x = beforeX-97;	// TRANSLATION FROM a-h TO 0-7	
+		to.x = afterX-97;		// TRANSLATION FROM a-h TO 0-7
+
+		from.y = beforeY-49;	// TRANSLATION FROM 1-8 TO 0-7
+		to.y = afterY-49;		// TRANSLATION FROM 1-8 TO 0-7
+		cout<<from.x<<from.y<<to.x<<to.y<<grid[from.x][from.y]<<grid[to.x][to.y]<<endl;
 
 	switch(input_piece){
 

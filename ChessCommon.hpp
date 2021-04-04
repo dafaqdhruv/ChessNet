@@ -47,8 +47,7 @@ public:
 		Player(affiliation);
 		Opponent(!affiliation);
 
-		Start(validation);
-		
+		Start(validation);		
 	}
 
 	~ChessServer();
