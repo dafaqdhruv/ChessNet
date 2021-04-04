@@ -42,7 +42,8 @@ class player {
 	Knight* N;
 	Pawn* 	P;
 
-	int score;
+
+	// int score;
 
 	public :
 
@@ -53,7 +54,9 @@ class player {
 	}
 	~player(){}	
 
-
+	bool black_or_white(){
+		return (King->getType() > 0) ? true : false;
+	}
 
 	King* getKing() { return K;}
 	Queen* getQueen() { return Q;}

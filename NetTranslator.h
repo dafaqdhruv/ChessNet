@@ -1,6 +1,10 @@
+enum class PieceOwner : uint32_t
+{
+	White,
+	Black
+}
 
-
-enum class GamePieces : uint32_t
+enum class Pieces : uint32_t
 {
 	King,
 	Queen,
@@ -13,11 +17,13 @@ enum class GamePieces : uint32_t
 enum class GameMessage : uint32_t
 {
 	
-	Server_GetStatus,
-	Server_GetPing,
-
+	GetStatus,
+	Ping,
+	YourTurn,
+	
 	Client_Accepted,
 	Client_AssignID,
+	Client_Verify,
 	Client_RegisterWithServer,
 	Client_UnregisterWithServer,
 
@@ -28,7 +34,7 @@ enum class GameMessage : uint32_t
 
 struct PieceMove {
 	
-	GamePieces PieceType;
+	Pieces PieceType;
 	pos To;
 	pos From;
 };

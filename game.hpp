@@ -17,6 +17,7 @@ void toLower(char &A){
 
 void give_next_move(){}
 
+
 template <class PP>
 void choose_move(PP* piece, int grid[8][8], int new_val = 0){
 
@@ -43,9 +44,10 @@ void choose_move(PP* piece, int grid[8][8], int new_val = 0){
 }
 
 
-void parse_input(player* Player, player* Enemy, int grid[8][8]){
+string parse_input(player* Player, player* Enemy, int grid[8][8]){
 
 	char input_piece, beforeX,beforeY, afterX,afterY;
+	std::string out = "";
 	pos from, to;
 	
 	cout<<"Enter Piece, original pos, new pos (example -> K e6 f5) :\n\t";
@@ -55,9 +57,16 @@ void parse_input(player* Player, player* Enemy, int grid[8][8]){
 	cin>>afterX;
 	cin>>afterY;
 
+	out+=input_piece;
+	out+=beforeX;
+	out+=beforeY;
+	out+=afterX;
+	out+=afterY;
 	// scanf("%c %c%c %c%c", &input_piece, &beforeX, &beforeY, &afterX, &afterY);
 
 	cout<<input_piece<<beforeX<<beforeY<<afterX<<afterY<<endl;
+	cout<<out<<endl;
+
 	toLower(beforeX);
 	toLower(afterX);
 
@@ -302,6 +311,8 @@ void parse_input(player* Player, player* Enemy, int grid[8][8]){
 
 		default : 	cout<<"INVALID.";	
 	}	
+
+	return out;
 }
 
 void input_player_move(player* Player, int grid[8][8]){
@@ -379,10 +390,10 @@ bool game(bool affiliation, player* White, player* Black, int board[8][8], int w
 
 
 
-class gameclass : public net::clientinterface<GameMessage> {
+// class gameclass : public net::clientinterface<GameMessage> {
 
 
-	bool onGameInit(/* depending on initiator or responder */){} //INIT CONNECTION AND READY THE GAME
+// 	bool onGameInit( depending on initiator or responder ){} //INIT CONNECTION AND READY THE GAME
 	
 
-};
+// };
