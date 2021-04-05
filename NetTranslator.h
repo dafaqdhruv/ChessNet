@@ -2,7 +2,7 @@ enum class PieceOwner : uint32_t
 {
 	White,
 	Black
-}
+};
 
 enum class Pieces : uint32_t
 {
@@ -12,7 +12,7 @@ enum class Pieces : uint32_t
 	Bishop,
 	Knight,
 	Pawn
-}
+};
 
 enum class GameMessage : uint32_t
 {
@@ -29,7 +29,7 @@ enum class GameMessage : uint32_t
 
 	Game_BeginGame,
 	Game_EndGame,
-	Game_UpdatePlayer,	
+	Game_UpdatePlayer	
 };
 
 struct PieceMove {

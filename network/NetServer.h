@@ -64,13 +64,13 @@ namespace net
 		}
 
 		// ASYNC - Instruct asio to wait for connection
-		void WaitForClientConnection(uint64_t validate)
+		void WaitForClientConnection(uint64_t validate = 0)
 		{
 			// Prime context with an instruction to wait until a socket connects. This
 			// is the purpose of an "acceptor" object. It will provide a unique socket
 			// for each incoming connection attempt
 			m_asioAcceptor.async_accept(
-				[this](std::error_code ec, asio::ip::tcp::socket socket)
+				[this, &validate](std::error_code ec, asio::ip::tcp::socket socket)
 				{
 					// Triggered by incoming connection request
 					if (!ec)
@@ -79,9 +79,7 @@ namespace net
 						std::cout << "[SERVER] New Connection: " << socket.remote_endpoint() << "\n";
 
 						// Create a new connection to handle this client 
-						std::shared_ptr<connection<T>> newconn = 
-							std::make_shared<connection<T>>(connection<T>::owner::server, 
-								m_asioContext, std::move(socket), m_qMessagesIn, uint64_t validate);
+						std::shared_ptr<connection<T>> newconn = std::make_shared<connection<T>>(connection<T>::owner::server, m_asioContext, std::move(socket), m_qMessagesIn, validate);
 						
 						
 

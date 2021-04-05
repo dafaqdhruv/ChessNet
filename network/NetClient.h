@@ -18,7 +18,7 @@ namespace net
 
 	public:
 		// Connect to server with hostname/ip-address and port
-		bool Connect(const std::string& host, const uint16_t port, uint64_t validate)
+		bool Connect(const std::string& host, const uint16_t port, uint64_t validate = 0)
 		{
 			try
 			{

@@ -72,6 +72,8 @@ string parse_input(player* Player, player* Enemy, int grid[8][8], string msg="NU
 		out+=beforeY;
 		out+=afterX;
 		out+=afterY;
+		out+='\0';
+		cout<<"This is what i came up with  ++++++===> "<<out<<"\t #####"<<endl;
 	}
 	else{
 		input_piece = msg[0];

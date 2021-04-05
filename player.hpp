@@ -47,15 +47,16 @@ class player {
 
 	public :
 
+	// player();
 	player(bool affiliation){
 		K = nullptr;Q = nullptr;R = nullptr;B = nullptr;N = nullptr;P = nullptr;
 		set_pieces(affiliation);
-		score = 0;
+		// score = 0;
 	}
 	~player(){}	
 
 	bool black_or_white(){
-		return (King->getType() > 0) ? true : false;
+		return (K->getType() > 0) ? true : false;
 	}
 
 	King* getKing() { return K;}
