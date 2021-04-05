@@ -1,0 +1,1 @@
+add_library(ChessLib board.hpp game.hpp pieces.hpp player.hpp NetTranslator.h ChessCommon.hpp bundle.cpp)
