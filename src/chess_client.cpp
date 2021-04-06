@@ -1,13 +1,13 @@
 #include "../include/ChessCommon.hpp"
 
 
-int main(int argc, char** argv[]){
+int main(int argc, char *argv[]){
 
 	// std::string server_IP = "192.168.29.166";
 	std::string server_IP;
 	if(argc>1) server_IP = argv[1];
 	else server_IP = "127.0.0.1";
-	
+
 	// std::cout << "Enter IP addr to connect to : ";
 	// std::cin >> server_IP;
 
