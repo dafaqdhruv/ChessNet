@@ -13,7 +13,7 @@ namespace net
 	public:
 		// Create a server, ready to listen on specified port
 		server_interface(uint16_t port)
-			: m_asioAcceptor(m_asioContext, asio::ip::tcp::endpoint(asio::ip::tcp::v4(), port))
+			: m_asioAcceptor(m_asioContext, asio::ip::tcp::endpoint(asio::ip::tcp::v6(), port))
 		{
 
 		}
