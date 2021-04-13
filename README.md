@@ -2,7 +2,7 @@
 Attempt at networking in C++ with a classic chess game. (No GUI)  
 Tested with gcc(9.3.0) on linux and MacOS.  
 
-# Thanks and Inspirations
+## Thanks and Inspirations
 Huge thanks to OneLoneCoder ([JavidX9](https://github.com/OneLoneCoder)) and his [video series](https://youtu.be/2hNdkYInj4g) on Networking in C++ using ASIO.  
 The Networking module of this project has been inspired from his [olcPixelGameEngine](https://github.com/OneLoneCoder/olcPixelGameEngine).
 
@@ -34,7 +34,7 @@ The Client-side asks for the IP address, connects and starts the game if IP is v
 > Probably..
 
 
-# Some Issues
+## Some Issues
 > - IPv6 only for now. DNS issues with IPv4. Will sort that out.
 > - Game never ends 
 > - I killed the king
