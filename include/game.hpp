@@ -7,15 +7,21 @@
 
 using namespace std;
 
-void toLower(char &A){
-
-	if(A>=65 && A<=90){
+// Convert any unexpected upperCase to lowerCase
+void toLower(char &A)
+{
+	if(A>=65 && A<=90)
 		A = A+32;
-	}
 }
 
 
-void give_next_move(){}
+////// TO-DO/////////////////////////////////////
+// Game AI///////////////////////////////////////
+// returns the move with best possible outcome///
+// will use minimax with very light weights//////
+/////////////////////////////////////////////////
+void give_next_move()
+{}
 
 
 template <class PP>
@@ -44,12 +50,18 @@ void choose_move(PP* piece, int grid[8][8], int new_val = 0){
 }
 
 
-string parse_input(player* Player, player* Enemy, int grid[8][8], string msg="NULL"){
 
+// Parses consolse input
+// into a valid chess move
+// will also work on provided string (msg)
+string parse_input(player* Player, player* Enemy, int grid[8][8], string msg="NULL")
+{
 	char input_piece, beforeX,beforeY, afterX,afterY;
 	std::string out = "";
 	pos from, to;
-		
+	
+	// If no message provided
+	// Get console input
 	if(msg=="NULL")
 	{
 		cout<<"Enter Piece, original pos, new pos (example -> K e6 f5) :\n\t";
@@ -58,23 +70,26 @@ string parse_input(player* Player, player* Enemy, int grid[8][8], string msg="NU
 		cin>>beforeY;
 		cin>>afterX;
 		cin>>afterY;
-
-		// scanf("%c %c%c %c%c", &input_piece, &beforeX, &beforeY, &afterX, &afterY);
-		cout<<input_piece<<beforeX<<beforeY<<afterX<<afterY<<endl;
-		cout<<out<<endl;
-
-
+	
+		// Can also use StringStreams for this.
+		
 		toLower(beforeX);
 		toLower(afterX);
-
+	
+		// string 'out' will be returned
+		// and will be sent out to opponent
 		out+=input_piece;
-		out+=beforeX;		// translation for characters and
+		out+=beforeX;
 		out+=beforeY;
 		out+=afterX;
 		out+=afterY;
 		out+='\0';
+		// Debug message
 		cout<<"This is what i came up with  ++++++===> "<<out<<"\t #####"<<endl;
 	}
+
+	// Message string was provided
+	// will use that
 	else{
 		input_piece = msg[0];
 		beforeX = msg[1];
@@ -84,249 +99,325 @@ string parse_input(player* Player, player* Enemy, int grid[8][8], string msg="NU
 	}
 
 
-		from.x = beforeX-97;	// TRANSLATION FROM a-h TO 0-7	
-		to.x = afterX-97;		// TRANSLATION FROM a-h TO 0-7
+	from.x = beforeX-97;	// TRANSLATION FROM a-h TO 0-7	
+	to.x = afterX-97;		// TRANSLATION FROM a-h TO 0-7
 
-		from.y = beforeY-49;	// TRANSLATION FROM 1-8 TO 0-7
-		to.y = afterY-49;		// TRANSLATION FROM 1-8 TO 0-7
-		cout<<from.x<<from.y<<to.x<<to.y<<grid[from.x][from.y]<<grid[to.x][to.y]<<endl;
+	from.y = beforeY-49;	// TRANSLATION FROM 1-8 TO 0-7
+	to.y = afterY-49;		// TRANSLATION FROM 1-8 TO 0-7
+	// Debug message
+	cout<<from.x<<from.y<<to.x<<to.y<<grid[from.x][from.y]<<grid[to.x][to.y]<<endl;
 
-	switch(input_piece){
 
-		case 'K' :
-		case 'k' :	if(Player->getKing()->getType() == grid[from.x][from.y]){
+	// Fetch the piece
+	// Move the pieces if valid input
+	// kill anyone killable
+	switch(input_piece)
+	{
+		case 'K' :	// Check if the selected piece is really at that position
+		case 'k' :	if(Player->getKing()->getType() == grid[from.x][from.y])
+				{
+					// check if player has any alive pieces of the selected type on that position
+					auto piece = Player->getPieceByPos(Player->getKing(),from);	
 
-						auto piece = Player->getPieceByPos(Player->getKing(),from);			// CHECK IF FROM POSITION HAS A PIECE OF GIVEN TYPE. IF YES-->CHECK IF TO POSITION IS VALID MOVE OR NOT. IF YES-->MOVE
-						if(piece != nullptr){
-							if(piece->isMoveValid(to,grid)){
-								
-								if(piece->isKillShot(to,grid)){									
-
-									switch(grid[to.x][to.y]){
-										// case  1 :
-										// case -1 :
-										case  2 :
-										case -2 :	Enemy->getPieceByPos(Enemy->getQueen(),to)->die();
-													break;
-										case  3 :
-										case -3 :	Enemy->getPieceByPos(Enemy->getRook(),to)->die();
-													break;
-										case  4 :
-										case -4 :	Enemy->getPieceByPos(Enemy->getKnight(),to)->die();
-													break;
-										case  5 :
-										case -5 :	Enemy->getPieceByPos(Enemy->getBishop(),to)->die();
-													break;
-										case  6 :
-										case -6 :	Enemy->getPieceByPos(Enemy->getPawn(),to)->die();
-													break;
-									}
+					// Piece is found
+					if(piece != nullptr)
+					{
+						// Is entered move valid?
+						// Can the selected piece really move there?
+						if(piece->isMoveValid(to,grid))
+						{
+							// Is the move going to kill someone?
+							if(piece->isKillShot(to,grid))
+							{	
+								// Intruct the unlucky piece to die
+								switch(grid[to.x][to.y])
+								{
+									// case  1 :	// king cant die (obv)
+									// case -1 :
+									case  2 :
+									case -2 :	Enemy->getPieceByPos(Enemy->getQueen(),to)->die();
+												break;
+									case  3 :
+									case -3 :	Enemy->getPieceByPos(Enemy->getRook(),to)->die();
+												break;
+									case  4 :
+									case -4 :	Enemy->getPieceByPos(Enemy->getKnight(),to)->die();
+												break;
+									case  5 :
+									case -5 :	Enemy->getPieceByPos(Enemy->getBishop(),to)->die();
+												break;
+									case  6 :
+									case -6 :	Enemy->getPieceByPos(Enemy->getPawn(),to)->die();
+												break;
 								}
+							}
+							
+							// now move the piece
+							piece->move(to,grid);
+							// Debug message
+							cout<<"VALID&&MOVED";
+						}
+					}
+					// No piece found at given position
+					else cout<<"No piece found with matching position.";
+				}
+				break;
+
+		case 'Q' :	// Check if the selected piece is really at that position
+		case 'q' :	if(Player->getQueen()->getType() == grid[from.x][from.y])
+				{		
+					// check if player has any alive pieces of the selected type on that position
+					auto piece = Player->getPieceByPos(Player->getQueen(),from);
 					
-								piece->move(to,grid);
-								cout<<"VALID&&MOVED";
-							}
-						}
-						else cout<<"No piece found with matching position.";
-					}
-					break;
-
-		case 'Q' :
-		case 'q' :	if(Player->getQueen()->getType() == grid[from.x][from.y]){
-						auto piece = Player->getPieceByPos(Player->getQueen(),from);			// CHECK IF FROM POSITION HAS A PIECE OF GIVEN TYPE. IF YES-->CHECK IF TO POSITION IS VALID MOVE OR NOT. IF YES-->MOVE
-						if(piece != nullptr){
-							if(piece->isMoveValid(to,grid)){
-
-								if(piece->isKillShot(to,grid)){									
-
-									switch(grid[to.x][to.y]){
-										// case  1 :
-										// case -1 :
-										case  2 :
-										case -2 :	Enemy->getPieceByPos(Enemy->getQueen(),to)->die();
-													break;
-										case  3 :
-										case -3 :	Enemy->getPieceByPos(Enemy->getRook(),to)->die();
-													break;
-										case  4 :
-										case -4 :	Enemy->getPieceByPos(Enemy->getKnight(),to)->die();
-													break;
-										case  5 :
-										case -5 :	Enemy->getPieceByPos(Enemy->getBishop(),to)->die();
-													break;
-										case  6 :
-										case -6 :	Enemy->getPieceByPos(Enemy->getPawn(),to)->die();
-													break;
-									}
+					// Piece is found
+					if(piece != nullptr)
+					{
+						// Is entered move valid?
+						// Can the selected piece really move there?
+						if(piece->isMoveValid(to,grid))
+						{
+							// Is the move going to kill someone?
+							if(piece->isKillShot(to,grid))
+							{									
+								// Intruct the unlucky piece to die
+								switch(grid[to.x][to.y])
+								{
+									// case  1 :
+									// case -1 :
+									case  2 :
+									case -2 :	Enemy->getPieceByPos(Enemy->getQueen(),to)->die();
+												break;
+									case  3 :
+									case -3 :	Enemy->getPieceByPos(Enemy->getRook(),to)->die();
+												break;
+									case  4 :
+									case -4 :	Enemy->getPieceByPos(Enemy->getKnight(),to)->die();
+												break;
+									case  5 :
+									case -5 :	Enemy->getPieceByPos(Enemy->getBishop(),to)->die();
+												break;
+									case  6 :
+									case -6 :	Enemy->getPieceByPos(Enemy->getPawn(),to)->die();
+												break;
 								}
-
-								piece->move(to,grid);
-								cout<<"VALID&&MOVED";
 							}
+
+							// now move the piece
+							piece->move(to,grid);
+							// Debug message
+							cout<<"VALID&&MOVED";
 						}
-						else cout<<"No piece found with matching position.";
 					}
-					break;
+					// No piece found at given position
+					else cout<<"No piece found with matching position.";
+				}
+				break;
 
-		case 'R' :
-		case 'r' :	if(Player->getRook()->getType() == grid[from.x][from.y]){
-						auto piece = Player->getPieceByPos(Player->getRook(),from);			// CHECK IF FROM POSITION HAS A PIECE OF GIVEN TYPE. IF YES-->CHECK IF TO POSITION IS VALID MOVE OR NOT. IF YES-->MOVE
-						if(piece != nullptr){
-							if(piece->isMoveValid(to,grid)){
-
-								cout<<"Okay this is valid\n";
-																if(piece->isKillShot(to,grid)){									
-
-									switch(grid[to.x][to.y]){
-										// case  1 :
-										// case -1 :
-										case  2 :
-										case -2 :	Enemy->getPieceByPos(Enemy->getQueen(),to)->die();
-													break;
-										case  3 :
-										case -3 :	Enemy->getPieceByPos(Enemy->getRook(),to)->die();
-													break;
-										case  4 :
-										case -4 :	Enemy->getPieceByPos(Enemy->getKnight(),to)->die();
-													break;
-										case  5 :
-										case -5 :	Enemy->getPieceByPos(Enemy->getBishop(),to)->die();
-													break;
-										case  6 :
-										case -6 :	Enemy->getPieceByPos(Enemy->getPawn(),to)->die();
-													break;
-									}
+		case 'R' :  // Check if the selected piece is really at that position
+		case 'r' :	if(Player->getRook()->getType() == grid[from.x][from.y])
+				{
+					// check if player has any alive pieces of the selected type on that position
+					auto piece = Player->getPieceByPos(Player->getRook(),from);	
+					
+					// Piece is found
+					if(piece != nullptr)
+					{
+						// Is entered move valid?
+						// Can the selected piece really move there?
+						if(piece->isMoveValid(to,grid))
+						{
+							// Is the move going to kill someone?
+							if(piece->isKillShot(to,grid))
+							{									
+								// Intruct the unlucky piece to die
+								switch(grid[to.x][to.y])
+								{
+									// case  1 :
+									// case -1 :
+									case  2 :
+									case -2 :	Enemy->getPieceByPos(Enemy->getQueen(),to)->die();
+												break;
+									case  3 :
+									case -3 :	Enemy->getPieceByPos(Enemy->getRook(),to)->die();
+												break;
+									case  4 :
+									case -4 :	Enemy->getPieceByPos(Enemy->getKnight(),to)->die();
+												break;
+									case  5 :
+									case -5 :	Enemy->getPieceByPos(Enemy->getBishop(),to)->die();
+												break;
+									case  6 :
+									case -6 :	Enemy->getPieceByPos(Enemy->getPawn(),to)->die();
+												break;
 								}
-
-								piece->move(to,grid);
-								cout<<"VALID&&MOVED";
 							}
+
+							// now move the piece
+							piece->move(to,grid);
+							// Debug message
+							cout<<"VALID&&MOVED";
 						}
-						else cout<<"No piece found with matching position.";
 					}
-					break;
+					// No piece found at given position
+					else cout<<"No piece found with matching position.";
+				}
+				break;
 
-		case 'B' :
-		case 'b' :	if(Player->getBishop()->getType() == grid[from.x][from.y]){
-						auto piece = Player->getPieceByPos(Player->getBishop(),from);			// CHECK IF FROM POSITION HAS A PIECE OF GIVEN TYPE. IF YES-->CHECK IF TO POSITION IS VALID MOVE OR NOT. IF YES-->MOVE
-						if(piece != nullptr){
-							if(piece->isMoveValid(to,grid)){
-
-								cout<<"Okay this is valid\n";
-								if(piece->isKillShot(to,grid)){									
-
-									switch(grid[to.x][to.y]){
-										// case  1 :
-										// case -1 :
-										case  2 :
-										case -2 :	Enemy->getPieceByPos(Enemy->getQueen(),to)->die();
-													break;
-										case  3 :
-										case -3 :	Enemy->getPieceByPos(Enemy->getRook(),to)->die();
-													break;
-										case  4 :
-										case -4 :	Enemy->getPieceByPos(Enemy->getKnight(),to)->die();
-													break;
-										case  5 :
-										case -5 :	Enemy->getPieceByPos(Enemy->getBishop(),to)->die();
-													break;
-										case  6 :
-										case -6 :	Enemy->getPieceByPos(Enemy->getPawn(),to)->die();
-													break;
-									}
+		case 'B' :  // Check if the selected piece is really at that position
+		case 'b' :	if(Player->getBishop()->getType() == grid[from.x][from.y])
+				{
+					// check if player has any alive pieces of the selected type on that position
+					auto piece = Player->getPieceByPos(Player->getBishop(),from);
+					
+					// Piece is found
+					if(piece != nullptr)
+					{
+						// Is entered move valid?
+						// Can the selected piece really move there?
+						if(piece->isMoveValid(to,grid))
+						{
+							// Is the move going to kill someone?
+							if(piece->isKillShot(to,grid))
+							{									
+								// Intruct the unlucky piece to die
+								switch(grid[to.x][to.y])
+								{
+									// case  1 :
+									// case -1 :
+									case  2 :
+									case -2 :	Enemy->getPieceByPos(Enemy->getQueen(),to)->die();
+												break;
+									case  3 :
+									case -3 :	Enemy->getPieceByPos(Enemy->getRook(),to)->die();
+												break;
+									case  4 :
+									case -4 :	Enemy->getPieceByPos(Enemy->getKnight(),to)->die();
+												break;
+									case  5 :
+									case -5 :	Enemy->getPieceByPos(Enemy->getBishop(),to)->die();
+												break;
+									case  6 :
+									case -6 :	Enemy->getPieceByPos(Enemy->getPawn(),to)->die();
+												break;
 								}
-
-								piece->move(to,grid);
-								cout<<"VALID&&MOVED";
 							}
+
+							// now move the piece
+							piece->move(to,grid);
+							// Debug message
+							cout<<"VALID&&MOVED";
 						}
-						else cout<<"No piece found with matching position.";
 					}
-					break;
+					// No piece found at given position
+					else cout<<"No piece found with matching position.";
+				}
+				break;
 
-		case 'N' :
-		case 'n' :	if(Player->getKnight()->getType() == grid[from.x][from.y]){
-						auto piece = Player->getPieceByPos(Player->getKnight(),from);			// CHECK IF FROM POSITION HAS A PIECE OF GIVEN TYPE. IF YES-->CHECK IF TO POSITION IS VALID MOVE OR NOT. IF YES-->MOVE
-						if(piece != nullptr){
-							if(piece->isMoveValid(to,grid)){
-								cout<<"Okay this is valid\n";
-
-								if(piece->isKillShot(to,grid)){									
-
-									switch(grid[to.x][to.y]){
-										// case  1 :
-										// case -1 :
-										case  2 :
-										case -2 :	Enemy->getPieceByPos(Enemy->getQueen(),to)->die();
-													break;
-										case  3 :
-										case -3 :	Enemy->getPieceByPos(Enemy->getRook(),to)->die();
-													break;
-										case  4 :
-										case -4 :	Enemy->getPieceByPos(Enemy->getKnight(),to)->die();
-													break;
-										case  5 :
-										case -5 :	Enemy->getPieceByPos(Enemy->getBishop(),to)->die();
-													break;
-										case  6 :
-										case -6 :	Enemy->getPieceByPos(Enemy->getPawn(),to)->die();
-													break;
-									}
+		case 'N' :  // Check if the selected piece is really at that position
+		case 'n' :	if(Player->getKnight()->getType() == grid[from.x][from.y])
+				{
+					// check if player has any alive pieces of the selected type on that position
+					auto piece = Player->getPieceByPos(Player->getKnight(),from);
+					
+					// Piece is found
+					if(piece != nullptr)
+					{
+						// Is entered move valid?
+						// Can the selected piece really move there?
+						if(piece->isMoveValid(to,grid))
+						{
+							// Is the move going to kill someone?
+							if(piece->isKillShot(to,grid))
+							{	
+								// Intruct the unlucky piece to die
+								switch(grid[to.x][to.y])
+								{
+									// case  1 :
+									// case -1 :
+									case  2 :
+									case -2 :	Enemy->getPieceByPos(Enemy->getQueen(),to)->die();
+												break;
+									case  3 :
+									case -3 :	Enemy->getPieceByPos(Enemy->getRook(),to)->die();
+												break;
+									case  4 :
+									case -4 :	Enemy->getPieceByPos(Enemy->getKnight(),to)->die();
+												break;
+									case  5 :
+									case -5 :	Enemy->getPieceByPos(Enemy->getBishop(),to)->die();
+												break;
+									case  6 :
+									case -6 :	Enemy->getPieceByPos(Enemy->getPawn(),to)->die();
+												break;
 								}
-								piece->move(to,grid);
-								cout<<"VALID&&MOVED";
 							}
-							else cout <<"INVALID\n";
+							// now move the piece
+							piece->move(to,grid);
+							// Debug message
+							cout<<"VALID&&MOVED";
 						}
-						else cout<<"No piece found with matching position.";
 					}
-					break;
+					// No piece found at given position
+					else cout<<"No piece found with matching position.";
+				}
+				break;
 
-		case 'P' :
-		case 'p' :	if(Player->getPawn()->getType() == grid[from.x][from.y]){
-						auto piece = Player->getPieceByPos(Player->getPawn(),from);			// CHECK IF FROM POSITION HAS A PIECE OF GIVEN TYPE. IF YES-->CHECK IF TO POSITION IS VALID MOVE OR NOT. IF YES-->MOVE
-						if(piece != nullptr){
-							if(piece->isMoveValid(to,grid)){
-
-								cout<<"Okay this is valid\n";
-								
-								if(piece->isKillShot(to,grid)){									
-
-									switch(grid[to.x][to.y]){
-										// case  1 :
-										// case -1 :
-										case  2 :
-										case -2 :	Enemy->getPieceByPos(Enemy->getQueen(),to)->die();
-													break;
-										case  3 :
-										case -3 :	Enemy->getPieceByPos(Enemy->getRook(),to)->die();
-													break;
-										case  4 :
-										case -4 :	Enemy->getPieceByPos(Enemy->getKnight(),to)->die();
-													break;
-										case  5 :
-										case -5 :	Enemy->getPieceByPos(Enemy->getBishop(),to)->die();
-													break;
-										case  6 :
-										case -6 :	Enemy->getPieceByPos(Enemy->getPawn(),to)->die();
-													break;
-									}
+		case 'P' :  // Check if the selected piece is really at that position
+		case 'p' :	if(Player->getPawn()->getType() == grid[from.x][from.y])
+				{
+					// check if player has any alive pieces of the selected type on that position
+					auto piece = Player->getPieceByPos(Player->getPawn(),from);
+					
+					// Piece is found
+					if(piece != nullptr)
+					{
+						// Is entered move valid?
+						// Can the selected piece really move there?
+						if(piece->isMoveValid(to,grid))
+						{
+							// Is the move going to kill someone?
+							if(piece->isKillShot(to,grid))
+							{									
+								// Intruct the unlucky piece to die
+								switch(grid[to.x][to.y])
+								{
+									// case  1 :
+									// case -1 :
+									case  2 :
+									case -2 :	Enemy->getPieceByPos(Enemy->getQueen(),to)->die();
+												break;
+									case  3 :
+									case -3 :	Enemy->getPieceByPos(Enemy->getRook(),to)->die();
+												break;
+									case  4 :
+									case -4 :	Enemy->getPieceByPos(Enemy->getKnight(),to)->die();
+												break;
+									case  5 :
+									case -5 :	Enemy->getPieceByPos(Enemy->getBishop(),to)->die();
+												break;
+									case  6 :
+									case -6 :	Enemy->getPieceByPos(Enemy->getPawn(),to)->die();
+												break;
 								}
-
-								piece->move(to,grid);
-								cout<<"VALID&&MOVED";
 							}
+
+							// now move the piece
+							piece->move(to,grid);
+							// Debug message
+							cout<<"VALID&&MOVED";
 						}
-						else cout<<"No piece found with matching position.";
 					}
-					break;
+					// No piece found at given position
+					else cout<<"No piece found with matching position.";
+				}
+				break;
 
 		default : 	cout<<"INVALID.";	
 	}	
 
 	return out;
 }
-
+// Where have i used this?!
 void input_player_move(player* Player, int grid[8][8]){
 
 	int input;

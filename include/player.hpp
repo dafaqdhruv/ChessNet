@@ -8,29 +8,25 @@ using namespace std;
 template <class PP>
 void insert_pieces( PP** head, int posx, int posy, bool affiliation, int piece_type){
 
-   PP* new_piece = new PP(affiliation, piece_type, posx, posy);
+	PP* new_piece = new PP(affiliation, piece_type, posx, posy);
 
-   PP* last = *head;
+	PP* last = *head;
 
-   new_piece->next = nullptr;
-   
-   if(*head == nullptr){
-   		*head = new_piece;
-   		return;
-   }
+	new_piece->next = nullptr;
 
-
-    while (last->next != nullptr)   
-        last = last->next; 
+	if(*head == nullptr){
+		*head = new_piece;
+		return;
+	}
 
 
+	while (last->next != nullptr)   
+      	last = last->next; 
+	
 	new_piece->prev = last;
-    last->next = new_piece;   
-    return; 
+	last->next = new_piece;   
+	return; 
 }
-
-
-
 
 
 class player {

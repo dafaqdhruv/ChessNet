@@ -11,6 +11,7 @@ namespace net
 	class server_interface
 	{
 	public:
+
 		// Create a server, ready to listen on specified port
 		server_interface(uint16_t port)
 			: m_asioAcceptor(m_asioContext, asio::ip::tcp::endpoint(asio::ip::tcp::v6(), port))
@@ -20,11 +21,11 @@ namespace net
 
 		virtual ~server_interface()
 		{
-			// May as well try and tidy up
+			// tidy up
 			Stop();
 		}
 
-		// Starts the server!
+		// Starts the server
 		bool Start(uint64_t validate)
 		{
 			try

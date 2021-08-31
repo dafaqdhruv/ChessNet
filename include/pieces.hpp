@@ -5,7 +5,12 @@
 
 using namespace std;
 
-struct moves{
+// Struct definition for a board move
+// ( move piece up by 3 units and right by 2)
+// like that
+//
+struct moves
+{
 	int up;
 	int right;
 
@@ -15,7 +20,13 @@ struct moves{
 		}
 };
 
-struct pos{
+// struct definition for piece position on the board
+// x -> column number (0-7)
+// y -> row number (0-7)
+// did i ever use this?
+//
+struct pos
+{
 	int x;
 	int y;
 public: 
@@ -29,56 +40,66 @@ public:
 };
 
 
-class piece {
+// Class definition for a chess piece
+//
+class piece 
+{
+		// Type : piece type ( Pawn, Rook, Knight, Bishop, Queen, King)
+		// Will be Enum Later
+		int type;
 
-
-	int type;
-	
 	protected :
-		bool affiliation;												// True for white  False for Black
-		int posx;
-		int posy;
+
+		// True -> white  
+		// False -> Black
+		bool affiliation;
+		
+		// Position on the board
+		pos position;
 
 	public :
-
-	// piece* next;													//  Pawns, Bishop, Knight, Rook, Queen, King.
 	
-	piece();
-	piece(bool blk_or_white, int piece_type, int x, int y){
-
-		posx = x;
-		posy = y;
-
-		type = piece_type;
-		affiliation = blk_or_white;
-
+		// Why did I use linked lists?!
+		// piece* next;													//  Pawns, Bishop, Knight, Rook, Queen, King.
 		
-	}
+		piece();
+		piece(bool blk_or_white, int piece_type, int x, int y)
+		{
+			position(x,y);
 
+			type = piece_type;
+			affiliation = blk_or_white;
+		}
 
-	int getx(){return	posx;}
-	int gety(){return	posy;}
+		// Get Position
+		int getx() {return position.x;}
+		int gety() {return position.y;}
 
-	void setx(int x){posx = x;}
-	void sety(int y){posy = y;}
+		// Set Position
+		void setx(int x) {position.x = x;}
+		void sety(int y) {position.y = y;}
 
+		// Get Piece Type along with its affiliation
+		// White Pawn (6) // Black Pawn (-6)
+		int getType()
+		{
+			return (affiliation) ? (type) : (-1 * type); 
+		}
 
-
-	int getType(){	return (affiliation) ? (type) : (-1 * type);	}
-
-	void move(pos to, int grid[8][8]){
-
-		grid[to.x][to.y] = grid[posx][posy];
-		grid[posx][posy] = 0;
-		posx = to.x;
-		posy = to.y;
-	}
+		// Moves the piece 
+		void move(pos to, int grid[8][8])
+		{
+			grid[to.x][to.y] = grid[posx][posy];
+			grid[posx][posy] = 0;
+			position =  to;
+		}
 };
 
 class King : public piece
 {
 	public :
-		King( bool blk_or_white, int piece_type, int x, int y) : piece(blk_or_white, piece_type, x, y)
+		King (bool blk_or_white, int piece_type, int x, int y) 
+			: piece(blk_or_white, piece_type, x, y)
 		{
 			next = nullptr;
 			prev = nullptr;
@@ -87,8 +108,8 @@ class King : public piece
 		King* next;
 		King* prev;
 
-		vector<pos>  possible_moves(int grid[8][8]){
-
+		vector<pos>  possible_moves (int grid[8][8])
+		{
 			vector<pos> out;
 
 			int tmpX = getx();
