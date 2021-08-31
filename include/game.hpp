@@ -33,9 +33,9 @@ void choose_move(PP* piece, int grid[8][8], int new_val = 0){
 
 	cout<<"MOTHERFUCKER I STUBBED MY TOE";
 	// if(piece->getType()>0)
-	// 	print_grid( 1, nullptr, nullptr, grid);
+	// 	board::print_grid( 1, nullptr, nullptr, grid);
 	// else 
-	// 	print_grid( 0, nullptr, nullptr, grid);
+	// 	board::print_grid( 0, nullptr, nullptr, grid);
 
 	cin>>input;
 	shift_to = temp.at(input-1);
@@ -43,9 +43,9 @@ void choose_move(PP* piece, int grid[8][8], int new_val = 0){
 	piece->move(shift_to,grid);
 
 	if(piece->getType()>0)
-		print_grid( 1, nullptr, nullptr, grid);
+		board::print_grid( 1, nullptr, nullptr, grid);
 	else 
-		print_grid( 0, nullptr, nullptr, grid);
+		board::print_grid( 0, nullptr, nullptr, grid);
 
 }
 
@@ -478,12 +478,12 @@ bool game(bool affiliation, player* White, player* Black, int board[8][8], int w
 		if(count){			 /*&& !Win */
 
 			parse_input(White, Black, board);	
-			print_grid(affiliation, nullptr, nullptr, board);
+			board::print_grid(affiliation, nullptr, nullptr, board);
 			count = !count;
 		}
 		else{
 			parse_input(Black, White, board);	
-			print_grid(affiliation, nullptr, nullptr, board);
+			board::print_grid(affiliation, nullptr, nullptr, board);
 			count = !count;
 		}
 	}

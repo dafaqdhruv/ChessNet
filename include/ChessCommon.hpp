@@ -63,9 +63,9 @@ class ChessServer :  public net::server_interface<GameMessage>		// The initialis
 	
 			// Prints the board accordingly
 			if(affiliation)
-				print_grid(true, &Player, &Opponent, local_grid);
+				board::print_grid(true, &Player, &Opponent, local_grid);
 			else
-				print_grid(false,  &Opponent, &Player, local_grid);
+				board::print_grid(false,  &Opponent, &Player, local_grid);
 		}
 
 		~ChessServer(){}
@@ -129,11 +129,11 @@ class ChessServer :  public net::server_interface<GameMessage>		// The initialis
 			// Debug messages
 			std::cout<<"Server SIDE ::\n";
 			std::cout<<"The string is "<<temp;
-			for( auto i = msg.body){
+			for( auto i :  msg.body){
 				cout<<i;
 			}cout<<endl;
 		
-			print_grid(Player.black_or_white(), nullptr, nullptr, local_grid);
+			board::print_grid(Player.black_or_white(), nullptr, nullptr, local_grid);
 
 		}
 
@@ -209,7 +209,7 @@ class ChessServer :  public net::server_interface<GameMessage>		// The initialis
 					// parse console input
 					parse_input(&Opponent, &Player, local_grid, move);
 				
-					print_grid(Player.black_or_white(), nullptr, nullptr, local_grid);
+					board::print_grid(Player.black_or_white(), nullptr, nullptr, local_grid);
 
 					MyTurn(client);
 				}
@@ -275,9 +275,9 @@ class ChessClient :  public net::client_interface<GameMessage>
 			Connect(IP, nPort, 7587303549);
 
 			if(affiliation)
-				print_grid(true, &Player, &Opponent, local_grid);
+				board::print_grid(true, &Player, &Opponent, local_grid);
 			else
-				print_grid(false,  &Opponent, &Player, local_grid);
+				board::print_grid(false,  &Opponent, &Player, local_grid);
 
 		}
 
@@ -332,7 +332,7 @@ class ChessClient :  public net::client_interface<GameMessage>
 			Send(msg);
 			
 			// Update player's board 
-			print_grid(Player.black_or_white(), nullptr, nullptr, local_grid);
+			board::print_grid(Player.black_or_white(), nullptr, nullptr, local_grid);
 	
 
 			// Debug messages
@@ -350,7 +350,7 @@ class ChessClient :  public net::client_interface<GameMessage>
 		void do_this(string move){
 
 			parse_input(&Opponent, &Player, local_grid, move);
-			print_grid(Player.black_or_white(), nullptr, nullptr, local_grid);	
+			board::print_grid(Player.black_or_white(), nullptr, nullptr, local_grid);	
 		}
 
 	protected:

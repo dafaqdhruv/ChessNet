@@ -65,7 +65,7 @@ class piece
 		piece();
 		piece(bool blk_or_white, int piece_type, int x, int y)
 		{
-			position(x,y);
+			position = pos(x,y);
 
 			type = piece_type;
 			affiliation = blk_or_white;
@@ -89,8 +89,8 @@ class piece
 		// Moves the piece 
 		void move(pos to, int grid[8][8])
 		{
-			grid[to.x][to.y] = grid[posx][posy];
-			grid[posx][posy] = 0;
+			grid[to.x][to.y] = grid[position.x][position.y];
+			grid[position.x][position.y] = 0;
 			position =  to;
 		}
 };
@@ -127,8 +127,8 @@ class King : public piece
 
 			int flag = true;
 
-			if(to.x-posx == 1 || to.x-posx == -1){
-				if( to.y-posy == 1 || to.y-posy == -1){
+			if(to.x-position.x == 1 || to.x-position.x == -1){
+				if( to.y-position.y == 1 || to.y-position.y == -1){
 					if(grid[to.x][to.y] * getType() <= 0)	return true;
 					else cout<<"Invalid move due to presence of same team piece at target.";
 				}
@@ -656,14 +656,14 @@ class Knight : public piece
 
 			if(grid[to.x][to.y] * getType() > 0)	{cout<<"Invalid move due to presence of same team piece at target.";return false;}		// CHECK FOR SAME TEAM PIECE AT POS
 
-			if(to.x-posx == 2 || to.x-posx ==-2){
-				if(to.y-posy == 1 || to.y-posy == -1){
+			if(to.x-position.x == 2 || to.x-position.x ==-2){
+				if(to.y-position.y == 1 || to.y-position.y == -1){
 					return true;
 				}
 			}
 
-			else if(to.y-posy == 2 || to.y-posy == -2){
-				if(to.x-posx == 1 || to.x-posx ==-1){
+			else if(to.y-position.y == 2 || to.y-position.y == -2){
+				if(to.x-position.x == 1 || to.x-position.x ==-1){
 					return true;
 				}
 			}
@@ -715,18 +715,18 @@ class Pawn : public piece
 
 			if(grid[to.x][to.y] * getType() > 0)	{cout<<"Invalid move due to presence of same team piece at target.";return false;}		// CHECK FOR SAME TEAM PIECE AT POS
 
-			if(to.x == posx){
-				if(to.y-posy == 1 && affiliation)	return true;		// WHITE CASE
+			if(to.x == position.x){
+				if(to.y-position.y == 1 && affiliation)	return true;		// WHITE CASE
 
-				else if(to.y-posy == -1 && !affiliation)	return true;		// BLACK CASE
+				else if(to.y-position.y == -1 && !affiliation)	return true;		// BLACK CASE
 
-				else if(to.y-posy == 2 && affiliation && posy == 1)	return true;
-				else 	if(to.y-posy == -2 && affiliation && posy == 6)	return true;
+				else if(to.y-position.y == 2 && affiliation && position.y == 1)	return true;
+				else 	if(to.y-position.y == -2 && affiliation && position.y == 6)	return true;
 			}
-			else if( to.x-posx ==1 || to.x-posx ==-1){
-				if(to.y-posy == 1 && affiliation && grid[to.x][to.y]*getType() < 0)	return true;		// WHITE CASE
+			else if( to.x-position.x ==1 || to.x-position.x ==-1){
+				if(to.y-position.y == 1 && affiliation && grid[to.x][to.y]*getType() < 0)	return true;		// WHITE CASE
 
-				if(to.y-posy == -1 && !affiliation && grid[to.x][to.y]*getType() < 0)	return true;		// BLACK CASE
+				if(to.y-position.y == -1 && !affiliation && grid[to.x][to.y]*getType() < 0)	return true;		// BLACK CASE
 			}
 			else cout<<"Invalid move for Pawn.";
 			return false;
