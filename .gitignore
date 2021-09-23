@@ -39,5 +39,8 @@ build/CMakeCache.txt
 cmake_install.cmake
 bin/
 build/
+**/Makefile
 CMakeLists.txt.user
 **/CMakeFiles/
+**/Builds/
+**example/
