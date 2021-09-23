@@ -1,11 +1,13 @@
 #ifndef DIALOG_H
 #define DIALOG_H
 
+#include <iostream>
 #include <string>
 
 #include <QtWidgets>
+#include <QtNetwork/QHostAddress>
 #include <QDialog>
-
+#include <QErrorMessage>
 
 QT_BEGIN_NAMESPACE
 class QAction;
@@ -49,31 +51,58 @@ public:
 
 	std::string exportIP6()
 	{
-		return ipAddress.toStdString();
+		return ipAddress.toString().toStdString();
 	}
 
 private:
 	QGroupBox *formGroupBox;
 	QLineEdit *ipLineEdit;
 	QPushButton *connectButton;
-	QString ipAddress = "";
+	QHostAddress ipAddress;
 	void createFormGroupBox()
 	{
-	    formGroupBox = new QGroupBox(tr("Server IP"));
-	    QFormLayout *layout = new QFormLayout;
+		formGroupBox = new QGroupBox(tr("Server IP"));
+		QFormLayout *layout = new QFormLayout;
 
-	    ipLineEdit = new QLineEdit("  :  :  :  :  ", this);
-	    ipLineEdit -> setFrame(true);
-	    ipLineEdit -> setMaxLength(46);
+		ipLineEdit = new QLineEdit("", this);
+		ipLineEdit -> setFrame(true);
+		ipLineEdit -> setMaxLength(46);
 
-	    layout->addRow(new QLabel(tr("Enter IPV6 address :")), ipLineEdit);
+	// 	Not required anymore;
+	// 	QHostAddress::isNull does the job
+	//	ipLineEdit -> setInputMask("000.000.000.000;0");
 
-	    formGroupBox->setLayout(layout);
+
+
+		layout->addRow(new QLabel(tr("Enter IPV6 address :")), ipLineEdit);
+
+		formGroupBox->setLayout(layout);
 	}
 
     	void getIP6(){
-		
-		ipAddress = ipLineEdit->displayText();
+	
+		ipAddress = QHostAddress(ipLineEdit->displayText());
+
+		if(ipAddress.isNull()){
+			QMessageBox errorBox;
+			errorBox.setText("Invalid IP Address.");
+			errorBox.exec();
+		} else {
+			
+			QMessageBox continueBox;
+			continueBox.setText("IP address is valid. Are you sure you want to connect to this host?");
+			
+			QPushButton *yesButton = continueBox.addButton("&Yes", QMessageBox::YesRole);
+			QPushButton *noButton = continueBox.addButton("&No", QMessageBox::NoRole);
+			continueBox.exec();
+
+			if (continueBox.clickedButton() == yesButton){
+				std::cout<<exportIP6()<<std::endl;
+			}
+			else {
+				continueBox.reject();
+			}
+		}
 	}
 };
 

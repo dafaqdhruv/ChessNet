@@ -1,6 +1,6 @@
 #include <QApplication>
 
-#include "setupGameWindow.hpp"
+#include "setupServer.hpp"
 
 int main(int argc, char *argv[])
 {

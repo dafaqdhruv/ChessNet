@@ -1,6 +1,6 @@
 #include <QApplication>
 
-#include "setupGameWindow.hpp"
+#include "connectClientWindow.hpp"
 
 int main(int argc, char *argv[])
 {
