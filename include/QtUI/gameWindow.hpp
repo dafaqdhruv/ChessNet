@@ -31,10 +31,10 @@ class gameWindow : public QMainWindow
 	Q_OBJECT
 
 public :
-	gameWindow()
+	gameWindow(int chessBoard[8][8], bool isPlayerWhite = true)
 	{
 
-		createChessGrid();		
+		createChessGrid(chessBoard, isPlayerWhite);		
 	
 
 		setCentralWidget(box);
@@ -49,18 +49,22 @@ public :
 
 	
 private : 
-	void createChessGrid()
+	
+	// To-do
+	// Layout chessGrid according to player color (Black/White)
+	void createChessGrid(int chessBoard[8][8], bool isWhite)
 	{	
+		this->isPlayerWhite = isWhite;
 		gameWindow::box = new QGroupBox();
 		QGridLayout* chessGridLayout = new QGridLayout();
-
 
 		bool topLeftColor = true; 	// white true 
 		for(int i = 0; i<8; i++ )
 		{
 			for(int j = 0; j<8; j++ )
 			{
-				gameWindow::tiles[i][j] = new gameTile((i*8)+j, topLeftColor ^ (j%2), 1);		// would give that alternating white/black pattern
+				gameWindow::tiles[i][j] = new gameTile( abs(7*!isPlayerWhite - i)*8+j, topLeftColor ^ (j%2), chessBoard[abs((7*!isPlayerWhite)-i)][j]);		// would give that alternating white/black pattern
+				gameWindow::tiles[i][j]->setMinimumSize(91,91);
 				connect(gameWindow::tiles[i][j], &gameTile::clicked, this, &gameWindow::selectTile);
 				chessGridLayout->addWidget(gameWindow::tiles[i][j], i+1, j+1);
 			}
@@ -75,14 +79,17 @@ private :
 	void selectTile(int pos)
 	{
 		currentlySelectedTile->unselect();
-		auto selectedTile = tiles[pos/8][pos%8];
+		auto selectedTile = tiles[abs(7*!isPlayerWhite-pos/8)][pos%8];
 		selectedTile->select();
 		currentlySelectedTile = selectedTile;
+	
+//		std::cout<<"Tile number selected :"<<pos<<"\t\t"<<selectedTile->height()<<"  "<<selectedTile->width()<<std::endl;
+std::cout<<"Tile number selected :"<<selectedTile->name()<<"\t\t"<<selectedTile->height()<<"  "<<selectedTile->width()<<std::endl;
 
 	}
 
 
-	
+	bool isPlayerWhite;	
 	QGroupBox* box;
 	gameTile* currentlySelectedTile;
 	gameTile* tiles[8][8];	//  a -- h

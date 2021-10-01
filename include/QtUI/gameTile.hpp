@@ -15,6 +15,10 @@ class QGroupBox;
 class QLabel;
 QT_END_NAMESPACE
 
+enum tileState : int { neutralTile = 0, selectedTile, underAttackTile, possibleMoveTile};
+enum tilePiece : int {blackPawn = -6, blackBishop, blackKnight, blackRook, blackQueen, blackKing, nil, whiteKing, whiteQueen, whiteRook, whiteKnight, whiteBishop, whitePawn};
+
+
 //const QColor selected(255, 51, 0, 127);	// orange 
 //const QColor underAttack(255, 0, 0, 127);	// red
 //const QColor possibleMove(0, 255, 0, 63);	// green
@@ -39,10 +43,6 @@ class gameTile : public QLabel
 
 public :
 
-	enum tileState { neutralTile = 0, selectedTile, underAttackTile, possibleMoveTile};
-//	enum tileColor { black = 0, white = 1 };
-//	enum tileOccupancy { empty = 0, occupiedFriendly, occupiedEnemy};
-	enum tilePiece {blackPawn = -6, blackBishop, blackKnight, blackRook, blackQueen, blackKing, nil, whiteKing, whiteQueen, whiteRook, whiteKnight, whiteBishop, whitePawn};
 
 
 
@@ -96,6 +96,14 @@ public :
 		else 
 			this->setPalette(QPalette(QPalette::Window, Qt::darkGray));
 
+	}
+
+	std::string name()
+	{
+		std::string out = "";
+		out += (char)(position%8 + 'a');
+		out += (char)(7 - position/8 + '1');
+		return out;
 	}
 	
 	void paintTile(tileState in_state)
