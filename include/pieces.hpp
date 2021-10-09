@@ -172,7 +172,6 @@ class Queen : public piece
 			int count = 1;
 
 			cout<<'\t';
-			// cout<<count++<<"MOTHERFUCKER"<<posX<<posY<<flag;
 
 			// X axis
 			for(int i = posX+1; i<8 && flag; i++){
