@@ -6,7 +6,6 @@
 #include <vector>
 
 #include "board.hpp"
-#include "moves.h"
 
 #include <QtWidgets>
 #include <QMainWindow>
@@ -23,9 +22,10 @@ enum tileState : int { neutralTile = 0, selectedTile, underAttackTile, possibleM
 //enum tilePiece : int {blackPawn = -6, blackBishop, blackKnight, blackRook, blackQueen, blackKing, nil, whiteKing, whiteQueen, whiteRook, whiteKnight, whiteBishop, whitePawn};
 
 
+
 const QColor selectedCol(255, 51, 0, 127);	// orange 
 //const QColor underAttack(255, 0, 0, 127);	// red
-//const QColor possibleMove(0, 255, 0, 63);	// green
+const QColor possibleMoveCol(0, 255, 0, 63);	// green
 
 #define whitePawnPng		":/icons/whitePawn.png"
 #define whiteRookPng		":/icons/whiteRook.png"
@@ -42,7 +42,17 @@ const QColor selectedCol(255, 51, 0, 127);	// orange
 #define blackKingPng		":/icons/blackKing.png"
 
 
-
+static std::string translateInt (int pos) 
+{
+	std::string out = "";
+	out += (char)(pos%8 + 'a');
+	out += (char)(7 - pos/8 + '1');
+	return out;
+}
+static int translateString(std::string pos)
+{
+	return (int)((pos[0]-'a') + (7-(pos[1]-'1'))*8);
+}
 
 
 
@@ -67,8 +77,8 @@ public :
 		this->piece = pieceType;
 		this->color = color;
 		this->position = pos;
-		this->possibleMoves = vector<int>();
-		this->possibleKillShots = vector<int>();
+		this->possibleMoves = std::vector<int>();
+		this->possibleKillShots = std::vector<int>();
 		
 		setTileIcon(static_cast<tilePiece>(pieceType));
 		
@@ -94,8 +104,19 @@ public :
 		if(!this->color)col = col.darker();
 		pal.setColor(QPalette::Window, col);
 		this->setPalette(pal);	
-	}
 
+		fillPossibleMoves();
+	}
+	
+	void setPossible()
+	{
+		state = tileState::possibleMoveTile;
+		QPalette pal;
+		QColor col = possibleMoveCol;
+		if(!this->color)col = col.darker();
+		pal.setColor(QPalette::Window, col);
+		this->setPalette(pal);	
+	}
 	void unselect() 
 	{
 		state = tileState::neutralTile;
@@ -107,10 +128,8 @@ public :
 
 	std::string name()
 	{
-		std::string out = "";
-		out += (char)(position%8 + 'a');
-		out += (char)(7 - position/8 + '1');
-		return out;
+
+		return translateInt(position);
 	}
 	
 //	void paintTile(tileState in_state)
@@ -118,10 +137,21 @@ public :
 //		
 //	}
 
+	std::vector<int> getPossibleMoves (){
+		return possibleMoves;
+	}
+	std::vector<int> getKillShots (){
+		return possibleKillShots;
+	}
+
+	tilePiece getPiece(){
+		return (tilePiece)piece;
+	}
 	void setTileIcon(tilePiece in_piece, int id = 0)
 	{
 		QPixmap tempPixmap;
-	
+		
+		piece = in_piece;
 		// to-do
 		// Messy, might add exception handling later
 		switch(in_piece)
@@ -158,7 +188,9 @@ public :
 	}
 
 	void reset()
-	{	
+	{
+		piece = tilePiece::nil;
+		possibleMoves.clear();
 		setPixmap(QPixmap());
 		unselect();
 	}
@@ -166,42 +198,42 @@ public :
 	// only to be called when piece is selected
 	void fillPossibleMoves()
 	{
-		vector<pair<int,bool>> tempList; 
+		std::vector<std::pair<std::string,bool>> tempList; 
 
 		switch(piece){
 	
-			case tilePiece::blackPawn :	tempList = ::fillPawnMoves(name(), 0);
+			case tilePiece::blackPawn :	tempList = moves::fillPawnMoves(name(), 0);
 				break;
-			case tilePiece::blackBishop :	tempList = ::fillBishopMoves(name(), 0);
+			case tilePiece::blackBishop :	tempList = moves::fillBishopMoves(name(), 0);
 				break;
-			case tilePiece::blackRook : 	tempList = ::fillRookMoves(name(), 0);
+			case tilePiece::blackRook : 	tempList = moves::fillRookMoves(name(), 0);
 				break;
-			case tilePiece::blackKnight :	tempList = ::fillKnightMoves(name(), 0);
+			case tilePiece::blackKnight :	tempList = moves::fillKnightMoves(name(), 0);
 				break;
-			case tilePiece::blackQueen : 	tempList = ::fillQueenMoves(name(), 0);
+			case tilePiece::blackQueen : 	tempList = moves::fillQueenMoves(name(), 0);
 				break;
-			case tilePiece::blackKing : 	tempList = ::fillKingMoves(name(), 0);
+			case tilePiece::blackKing : 	tempList = moves::fillKingMoves(name(), 0);
 				break;
-			case tilePiece::whitePawn :  	tempList = ::fillPawnMoves(name(), 1);
+			case tilePiece::whitePawn :  	tempList = moves::fillPawnMoves(name(), 1);
 				break;                                                     
-			case tilePiece::whiteBishop :	tempList = ::fillBishopMoves(name(), 1);
+			case tilePiece::whiteBishop :	tempList = moves::fillBishopMoves(name(), 1);
 				break;                                                     
-			case tilePiece::whiteRook : 	tempList = ::fillRookMoves(name(), 1);
+			case tilePiece::whiteRook : 	tempList = moves::fillRookMoves(name(), 1);
 				break;                                                     
-			case tilePiece::whiteKnight :	tempList = ::fillKnightMoves(name(), 1);
+			case tilePiece::whiteKnight :	tempList = moves::fillKnightMoves(name(), 1);
 				break;                                                     
-			case tilePiece::whiteQueen : 	tempList = ::fillQueenMoves(name(), 1);
+			case tilePiece::whiteQueen : 	tempList = moves::fillQueenMoves(name(), 1);
 				break;                                                     
-			case tilePiece::whiteKing : 	tempList = ::fillKingMoves(name(), 1);
+			case tilePiece::whiteKing : 	tempList = moves::fillKingMoves(name(), 1);
+				break;
+			default : std::cout<<"gabagooee\n";
 		}	
 
 		for(auto [pos, attack] : tempList){
 
-			if(attack) possibleKillShots.push_back(pos);
-			possibleMoves.push_back(pos);
+			if(attack) possibleKillShots.push_back(translateString(pos));
+			possibleMoves.push_back(translateString(pos));
 		}
-		
-
 	}
 
 protected : 
@@ -227,8 +259,8 @@ private :
 	
 	int position;		// 0-63 translated to a1 --> h8 
 
-	vector<int> possibleMoves;
-	vector<int> possibleKillShots;
+	std::vector<int> possibleMoves;
+	std::vector<int> possibleKillShots;
 };
 
 #endif

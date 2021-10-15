@@ -16,21 +16,21 @@ find_package(Qt6 COMPONENTS Gui REQUIRED)
 find_package(Qt6 COMPONENTS Widgets REQUIRED)
 find_package(Qt6 COMPONENTS Network REQUIRED)
 
-#qt_add_executable(connectClient
-#	connectClient.cpp
-#	connectClientWindow.hpp
-#)
-#
-#qt_add_executable(setupScrambler
-#	setupServer.cpp
-#	setupServer.hpp   
-#)
+qt_add_executable(connectClient
+	connectClient.cpp
+	connectClientWindow.hpp
+)
+
+qt_add_executable(setupScrambler
+	setupServer.cpp
+	setupServer.hpp   
+)
 
 qt_add_executable(setupGameWindow
+	board.hpp
 	gameTile.hpp
 	gameWindow.hpp
 	gameWindow.cpp
-
 )
 
 set_target_properties(setupGameWindow PROPERTIES
@@ -60,53 +60,53 @@ qt6_add_resources(setupGameWindow "icons"
 	  "icons/blackPawn.png"
 	  "icons/blackKnight.png"
 )
-#set_target_properties(connectClient PROPERTIES
-#    WIN32_EXECUTABLE TRUE
-#    MACOSX_BUNDLE TRUE
-#)
-#target_link_libraries(connectClient PUBLIC
-#    Qt::Core
-#    Qt::Gui
-#    Qt::Widgets
-#    Qt::Network
-#)
-#qt6_add_resources(connectClient "clientSide"
-#    PREFIX
-#        "/"
-#    FILES
-#        ${application_resource_files}
-#
-#)
-#
-#set_target_properties(setupScrambler PROPERTIES
-#    WIN32_EXECUTABLE TRUE
-#    MACOSX_BUNDLE TRUE
-#)
-#target_link_libraries(setupScrambler PUBLIC
-#    Qt::Core
-#    Qt::Gui
-#    Qt::Widgets
-#    Qt::Network
-#)
-#
-#qt6_add_resources(setupScrambler "serverSide"
-#    PREFIX
-#        "/"
-#    FILES
-#        ${application_resource_files}
-#)
+set_target_properties(connectClient PROPERTIES
+    WIN32_EXECUTABLE TRUE
+    MACOSX_BUNDLE TRUE
+)
+target_link_libraries(connectClient PUBLIC
+    Qt::Core
+    Qt::Gui
+    Qt::Widgets
+    Qt::Network
+)
+qt6_add_resources(connectClient "clientSide"
+    PREFIX
+        "/"
+    FILES
+        ${application_resource_files}
 
-#install(TARGETS connectClient 
-#    RUNTIME DESTINATION "${INSTALL_DIR}"
-#    BUNDLE DESTINATION "${INSTALL_DIR}"
-#    LIBRARY DESTINATION "${INSTALL_DIR}"
-#)
-#
-#install(TARGETS setupScrambler
-#    RUNTIME DESTINATION "${INSTALL_DIR}"
-#    BUNDLE DESTINATION "${INSTALL_DIR}"
-#    LIBRARY DESTINATION "${INSTALL_DIR}"
-#)
+)
+
+set_target_properties(setupScrambler PROPERTIES
+    WIN32_EXECUTABLE TRUE
+    MACOSX_BUNDLE TRUE
+)
+target_link_libraries(setupScrambler PUBLIC
+    Qt::Core
+    Qt::Gui
+    Qt::Widgets
+    Qt::Network
+)
+
+qt6_add_resources(setupScrambler "serverSide"
+    PREFIX
+        "/"
+    FILES
+        ${application_resource_files}
+)
+
+install(TARGETS connectClient 
+    RUNTIME DESTINATION "${INSTALL_DIR}"
+    BUNDLE DESTINATION "${INSTALL_DIR}"
+    LIBRARY DESTINATION "${INSTALL_DIR}"
+)
+
+install(TARGETS setupScrambler
+    RUNTIME DESTINATION "${INSTALL_DIR}"
+    BUNDLE DESTINATION "${INSTALL_DIR}"
+    LIBRARY DESTINATION "${INSTALL_DIR}"
+)
 
 install(TARGETS setupGameWindow
     RUNTIME DESTINATION "${INSTALL_DIR}"

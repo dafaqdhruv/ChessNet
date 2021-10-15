@@ -22,6 +22,17 @@ QT_END_NAMESPACE
 
 #include "gameTile.hpp"
 
+//int chessBoard[8][8]  = {
+//	{tilePiece::blackRook, tilePiece::blackKnight,tilePiece::blackBishop,tilePiece::blackQueen,tilePiece::blackKing,tilePiece::blackBishop,tilePiece::blackKnight,tilePiece::blackRook},
+//	{tilePiece::blackPawn,tilePiece::blackPawn,tilePiece::blackPawn,tilePiece::blackPawn,tilePiece::blackPawn,tilePiece::blackPawn,tilePiece::blackPawn,tilePiece::blackPawn},
+//	{0,0,0,0,0,0,0,0},
+//	{0,0,0,0,0,0,0,0},
+//	{0,0,0,0,0,0,0,0},
+//	{0,0,0,0,0,0,0,0},
+//	{tilePiece::whitePawn,tilePiece::whitePawn,tilePiece::whitePawn,tilePiece::whitePawn,tilePiece::whitePawn,tilePiece::whitePawn,tilePiece::whitePawn,tilePiece::whitePawn},
+//	{tilePiece::whiteRook, tilePiece::whiteKnight,tilePiece::whiteBishop,tilePiece::whiteQueen,tilePiece::whiteKing,tilePiece::whiteBishop,tilePiece::whiteKnight,whiteRook},
+//};
+
 
 
 class gameWindow : public QMainWindow
@@ -34,7 +45,7 @@ public :
 	gameWindow(int chessBoard[8][8], bool isPlayerWhite = true)
 	{
 
-		createChessGrid(chessBoard, isPlayerWhite);		
+		createChessGrid(chessBoard, isPlayerWhite);
 	
 
 		setCentralWidget(box);
@@ -74,18 +85,59 @@ private :
 
 		box->setLayout(chessGridLayout);
 	}
-
-
-	void selectTile(int pos)
-	{
-		currentlySelectedTile->unselect();
-		auto selectedTile = tiles[abs(7*!isPlayerWhite-pos/8)][pos%8];
-		selectedTile->select();
-		currentlySelectedTile = selectedTile;
 	
-//		std::cout<<"Tile number selected :"<<pos<<"\t\t"<<selectedTile->height()<<"  "<<selectedTile->width()<<std::endl;
-std::cout<<"Tile number selected :"<<selectedTile->name()<<"\t\t"<<selectedTile->height()<<"  "<<selectedTile->width()<<std::endl;
+	gameTile* getTileByPos(int pos){
+		return tiles[abs(7*!isPlayerWhite-pos/8)][pos%8];
+	}
+	
+	void movePiece(int from, int to)
+	{	
+		auto fromTile = getTileByPos(from);
+		auto toTile = getTileByPos(to);
+		
+		auto pieceType = fromTile->getPiece();
 
+		fromTile->reset();
+		toTile-> reset();
+	
+
+		toTile->setTileIcon(pieceType);
+
+		updateBoard(translateInt(from), tilePiece(0));
+		updateBoard(translateInt(to), pieceType);
+	}
+	void selectTile(int pos)
+	{	
+		auto temp = currentlySelectedTile->getPossibleMoves();
+		bool isMovePossible =  false;
+		for(auto i : temp) if(i == pos) isMovePossible = true;
+		for(auto i : temp)
+			getTileByPos(i)->unselect();
+		currentlySelectedTile->unselect();
+		
+		if(isMovePossible){
+			movePiece(translateString(currentlySelectedTile->name()), pos);
+			currentlySelectedTile = getTileByPos(pos);
+		}
+		else { // might remove the else completely
+			auto selectedTile = getTileByPos(pos);
+			selectedTile->select();
+			currentlySelectedTile = selectedTile;
+			
+			showPossibleMoves(selectedTile);
+
+			//		std::cout<<"Tile number selected :"<<pos<<"\t\t"<<selectedTile->height()<<"  "<<selectedTile->width()<<std::endl;
+			//std::cout<<"Tile number selected :"<<selectedTile->name()<<"\t\t"<<translateString(selectedTile->name())<<"    "<<selectedTile->height()<<"  "<<selectedTile->width()<<std::endl;
+//		std::cout<<"Tile number selected :"<<selectedTile->name()<<"\t\t"<<translateString(selectedTile->name())<<"   Board val is "<<ChessBoard<<<<std::endl;
+		}
+
+	}
+
+	void showPossibleMoves(gameTile* tile){
+		
+		for(auto i : tile -> getPossibleMoves()){
+			getTileByPos(i)->setPossible();
+		}
 	}
 
 
