@@ -2,7 +2,7 @@
 #define BOARD_HPP
 #include<iostream>
 #include<string>
-
+#include<vector>
 enum tilePiece : int {blackPawn = -6, blackBishop, blackKnight, blackRook, blackQueen, blackKing, nil, whiteKing, whiteQueen, whiteRook, whiteKnight, whiteBishop, whitePawn};
 
 //using enum tilePiece;

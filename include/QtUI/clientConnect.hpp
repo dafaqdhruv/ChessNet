@@ -21,12 +21,12 @@ class QPushButton;
 class QTextEdit;
 QT_END_NAMESPACE
 
-class Dialog : public QDialog
+class clientConnect : public QDialog
 {
     Q_OBJECT
 
 public:
-	Dialog()
+	clientConnect()
 	{
 	    createFormGroupBox();
 
@@ -34,8 +34,8 @@ public:
 	    connectButton -> setAutoDefault(true);
 	    connectButton -> setMaximumWidth(70);
 
-	    connect(connectButton, &QPushButton::clicked, this, &Dialog::getIP6);
-
+	    connect(connectButton, &QPushButton::clicked, this, &clientConnect::getIP6);
+	    connect(this, &clientConnect::exportIP6, this, &QDialog::accept);
 	    QVBoxLayout *mainLayout = new QVBoxLayout;
 
 	    mainLayout->addWidget(formGroupBox);
@@ -49,10 +49,6 @@ public:
 	    setMaximumSize(360, 135);
 	}
 
-	std::string exportIP6()
-	{
-		return ipAddress.toString().toStdString();
-	}
 
 private:
 	QGroupBox *formGroupBox;
@@ -67,13 +63,9 @@ private:
 		ipLineEdit = new QLineEdit("", this);
 		ipLineEdit -> setFrame(true);
 		ipLineEdit -> setMaxLength(46);
-
-	// 	Not required anymore;
-	// 	QHostAddress::isNull does the job
-	//	ipLineEdit -> setInputMask("000.000.000.000;0");
-
-
-
+		// 	Not required anymore;
+		// 	QHostAddress::isNull does the job
+		//	ipLineEdit -> setInputMask("000.000.000.000;0");
 		layout->addRow(new QLabel(tr("Enter IPV6 address :")), ipLineEdit);
 
 		formGroupBox->setLayout(layout);
@@ -97,13 +89,16 @@ private:
 			continueBox.exec();
 
 			if (continueBox.clickedButton() == yesButton){
-				std::cout<<exportIP6()<<std::endl;
+				emit exportIP6(ipAddress.toString().toStdString());
+				//std::cout<<exportIP6()<<std::endl;
 			}
 			else {
 				continueBox.reject();
 			}
 		}
 	}
+signals : 
+	void exportIP6(const std::string &IP);
 };
 
 #endif // DIALOG_H

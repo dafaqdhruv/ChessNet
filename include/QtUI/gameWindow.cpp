@@ -9,6 +9,8 @@
 /// To-DO
 //auto resize tiles on window resize??
 //or let them stay the same?
+//
+//center align window
 
 
 //int chessBoard[8][8]  = {
