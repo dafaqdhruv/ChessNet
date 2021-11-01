@@ -24,7 +24,7 @@ int main(int argc, char *argv[]){
 		// { true/false : white/black }
 		//
 		std::cout<<"IP i received was :: "<<ip<<std::endl;
-		ChessClient* Client = new ChessClient(server_IP, 60000, false);
+		ChessClient* Client = new ChessClient(ip, 60000, false);
 
 		// create new thread for this.
 		pthread_t clientThread;
