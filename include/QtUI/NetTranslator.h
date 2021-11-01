@@ -17,19 +17,19 @@
 enum class GameMessage : uint32_t
 {
 	
-	GetStatus,
+	GetStatus,//0 
 	Ping,
-	YourTurn,
+	YourTurn, //2
 	
 	Client_Accepted,
-	Client_AssignID,
+	Client_AssignID,//4
 	Client_Verify,
-	Client_RegisterWithServer,
+	Client_RegisterWithServer,//6
 	Client_UnregisterWithServer,
 
-	Game_BeginGame,
+	Game_BeginGame,//8
 	Game_EndGame,
-	Game_UpdatePlayer	
+	Game_UpdatePlayer	//10
 };
 
 // struct PieceMove {

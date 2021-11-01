@@ -133,6 +133,8 @@ namespace net
 					// message at the front of the queue.
 					bool bWritingMessage = !m_qMessagesOut.empty();
 					m_qMessagesOut.push_back(msg);
+					
+					
 					if (!bWritingMessage)
 					{
 						WriteHeader();

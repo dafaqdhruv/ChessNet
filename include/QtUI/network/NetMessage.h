@@ -47,6 +47,7 @@ namespace net
 		template<typename DataType>
 		friend message<T>& operator << (message<T>& msg, const DataType& data)
 		{
+
 			// Check that the type of the data being pushed is trivially copyable
 			static_assert(std::is_standard_layout<DataType>::value, "Data is too complex to be pushed into vector");
 

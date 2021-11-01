@@ -28,6 +28,8 @@ int local_grid[8][8] = {
 	{0,0,0,0,0,0,0,0}
 };
 
+
+static void *checkUpdate(void*);
 class ChessServer :  public net::server_interface<GameMessage>		// The initialiser
 {
 	private:
@@ -37,6 +39,7 @@ class ChessServer :  public net::server_interface<GameMessage>		// The initialis
 		//
 		gameWindow Player;
 		bool opponent_active = 0;
+		bool init;
 
 		void check(); // alert when check
 		void check_mate(); // alert when checkmate
@@ -56,9 +59,10 @@ class ChessServer :  public net::server_interface<GameMessage>		// The initialis
 			// Opponent = player(false);
 
 			// Start the server with a validation key
+			init = true;
 			Start(validation);
-			
 			Player.show();
+			
 		}
 
 		~ChessServer(){}
@@ -80,6 +84,7 @@ class ChessServer :  public net::server_interface<GameMessage>		// The initialis
 			client->Send(msg);
 		}
 
+		
 
 		// Server Starts a game 
 		//
@@ -87,62 +92,45 @@ class ChessServer :  public net::server_interface<GameMessage>		// The initialis
 		{
 			// Create data packet
 			net::message<GameMessage> msg;
-			msg.header.id = GameMessage::Game_BeginGame;
-
-			// Tells opponent if player(server) has chosen black/white
-			msg << Player.getPlayerAffiliation();
+			std::cout << "DEBUG plis begin game\n";
+			msg.header.id = GameMessage::YourTurn;
 			client->Send(msg);
+			// Tells opponent if player(server) has chosen black/white
+			//msg << Player.getPlayerAffiliation();
+			//for(auto i: msg.body)std::cout<<i;
+			//std::cout<<std::endl;
+		//	client->Send(msg);
 		}
-
-
+	
 		// Handles player move
 		//
 		void MyTurn(std::shared_ptr<net::connection<GameMessage>> client)
 		{
-			net::message<GameMessage> msg;
-			msg.header.id = GameMessage::YourTurn;
-
 			// Gets console input
 			//			auto temp = parse_input(&Player, &Opponent, local_grid);
 
 			Player.myTurn();
+		
+			if(init){
+				bool check = QObject::connect(&Player, &gameWindow::moved, [=](const char* temp){
+						
+						std::cout<<"inside SendThisMoveFUnc\n"<<temp;
+						net::message<GameMessage> msg;
+						msg.header.id = GameMessage::YourTurn;
+						
+						msg << temp[0];
+						msg << temp[1];
+						msg << temp[2];
+						msg << temp[3];
+						
+						client->Send(msg);
 
-			QObject::connect(&Player, &gameWindow::moved, [&](const std::string temp){
-					// Message body structure
-					// { T, x1,  y1, x2, y2 }
-					// T  : Piece type {Pawn/Rook/Bishop/Knight/Queen/King}
-					// x1&2 : initial & final column of piece
-					// y1&2 : initial & final row of piece
-					msg << (char)temp[0]; 	// x1
-					msg << (char)temp[1];	// y1	
-					msg << (char)temp[2];	// x2	
-					msg << (char)temp[3];	// y2	
+						Player.notMyTurn();
+					});
 
-					client->Send(msg);
-					// Debug messages
-					std::cout<<"Server SIDE ::\n";
-					std::cout<<"The string is "<<temp;
-					for( auto i :  msg.body){
-					std::cout<<i;
-					}std::cout<<std::endl;
-
-					Player.notMyTurn();
-			});
-
-
-			//			// Message body structure
-			//			// { T, x1,  y1, x2, y2 }
-			//			// T  : Piece type {Pawn/Rook/Bishop/Knight/Queen/King}
-			//			// x1&2 : initial & final column of piece
-			//			// y1&2 : initial & final row of piece
-			//			msg << (char)temp[0]; 		// T
-			//			msg << (char)temp[1];		// x1
-			//			msg << (char)temp[2];		// y1
-			//			msg << (char)temp[3];		// x2
-			//			msg << (char)temp[4];		// y2
-			//
-			//			client->Send(msg);
-
+				if(!check) std::cout<<"Signal did not connect\n";
+				init = false;
+			}
 		}
 
 	protected:
@@ -200,21 +188,17 @@ class ChessServer :  public net::server_interface<GameMessage>		// The initialis
 					// Handles player's move
 				case GameMessage::YourTurn :
 					{
-						std::cout << "[" << client->GetID() <<"] Move Recieved.\n";
 
 						std::string move = "";
-						msg>>move;
-						//debug message	
-						//	std::cout<<"CLIENT SENT ME THIS : "<<move<<endl;
-						//	cout<<(int)msg.header.id<<endl;
-						//	cout<<msg.size()<<endl;
+						char temp;
+						for(int i = 0; i<4; i++){
+							msg>>temp;
+							move = temp+move;
 
-						// parse console input
+						}
+						std::cout << "[" << client->GetID() <<"] Move Recieved."<<move<<"\n";
+						
 						Player.movePiece(translateString(move.substr(0,2)), translateString(move.substr(2,2)), false);
-//						parse_input(&Opponent, &Player, local_grid, move);
-
-						//board::print_grid(Player.black_or_white(), nullptr, nullptr, local_grid);
-
 						MyTurn(client);
 					}
 					break;
@@ -223,6 +207,8 @@ class ChessServer :  public net::server_interface<GameMessage>		// The initialis
 					// Message recieved to start the game
 				case GameMessage::Game_BeginGame : 
 					{
+						std::cout<<"So i\'m finna do this eh?(Game_BeginGame)\n";
+//						Ping(client);
 						MyTurn(client);
 					}
 					break;
@@ -243,7 +229,18 @@ class ChessServer :  public net::server_interface<GameMessage>		// The initialis
 			}
 		}
 
+
 };
+
+static void *checkUpdate(void* threadArg){
+
+    ChessServer* Server = (ChessServer*)threadArg;
+    std::cout<<"Hello I am under the water\n";
+    while(1){
+        Server->Update(-1, false);
+    }
+    pthread_exit(NULL);
+}
 
 
 
@@ -256,7 +253,7 @@ class ChessClient :  public net::client_interface<GameMessage>
 		// hence the two player objects
 		gameWindow Player;
 		bool opponent_active = 0;
-
+		bool init;
 		void check();
 		void check_mate();
 		void piece_moved();
@@ -268,17 +265,26 @@ class ChessClient :  public net::client_interface<GameMessage>
 
 		ChessClient(std::string IP, uint16_t nPort, bool affiliation) : Player(::chessBoard, affiliation) 
 	{
-		// Player(affiliation);
-		// Opponent(!affiliation);
-		// Player = player(false);
-		// Opponent = player(true);
-
 
 		// Establish a connection to the given IP & Port using a validation key
+		init = true;
 		Connect(IP, nPort, 7587303549);
 
-	//	Player(::ChessBoard, affiliation);
-		Player.show();
+			//	Player(::ChessBoard, affiliation);
+				Player.show();
+			QObject::connect(&Player, &gameWindow::moved, [=](const char* temp){
+					// Create message packet
+					net::message<GameMessage> msg;
+					msg.header.id = GameMessage::YourTurn;
+
+					msg << (char)temp[0]; 	// x1
+					msg << (char)temp[1];	// y1	
+					msg << (char)temp[2];	// x2	
+					msg << (char)temp[3];	// y2	
+
+					Send(msg);
+					Player.notMyTurn();
+			});
 	}
 
 		virtual ~ChessClient(){}			// VIRTUAL BECAUSE WITHOUT IT GCC GIVES LINKER ERROR  [undef reference to vtable for ~client()]
@@ -306,28 +312,22 @@ class ChessClient :  public net::client_interface<GameMessage>
 		//
 		void MyTurn()
 		{
-			// Create message packet
-			net::message<GameMessage> msg;
-			msg.header.id = GameMessage::YourTurn;
 
 			Player.myTurn();
 
-			QObject::connect(&Player, &gameWindow::moved, [&](const std::string temp){
-					msg << (char)temp[0]; 	// x1
-					msg << (char)temp[1];	// y1	
-					msg << (char)temp[2];	// x2	
-					msg << (char)temp[3];	// y2	
-
-					Send(msg);
-					// Debug messages
-					std::cout<<"Server SIDE ::\n";
-					std::cout<<"The string is "<<temp;
-					for( auto i :  msg.body){
-					std::cout<<i;
-					}std::cout<<std::endl;
-
-					Player.notMyTurn();
-			});
+//			QObject::connect(&Player, &gameWindow::moved, [=](const char* temp){
+//					// Create message packet
+//					net::message<GameMessage> msg;
+//					msg.header.id = GameMessage::YourTurn;
+//
+//					msg << (char)temp[0]; 	// x1
+//					msg << (char)temp[1];	// y1	
+//					msg << (char)temp[2];	// x2	
+//					msg << (char)temp[3];	// y2	
+//
+//					Send(msg);
+//					Player.notMyTurn();
+//			});
 		}
 
 
@@ -338,74 +338,76 @@ class ChessClient :  public net::client_interface<GameMessage>
 
 		// What to do when a message is recieved
 		//
-		virtual void OnMessage( std::shared_ptr< net::connection<GameMessage> > client, net::message< GameMessage >& msg)
-		{
-			switch(msg.header.id)
-			{
-				// Return a unique value based on the board's state 
-				// Like a parity function 
-				// and match them to check if both boards are in sync.
-				// case GameMessage::GetStatus : 
-				// {}	
-				// break;
-
-
-				// Server has accepted the client
-				// Game may begin
-				case GameMessage::Client_Accepted : 
-					{
-						std::cout<<"I HVE BEEN ACCEpTED\n";
-						MyTurn();
-					}	
-					break;
-
-
-					// Ping from server
-				case GameMessage::Ping :
-					{
-						std::cout << "[" << client->GetID() <<"] Ping Recieved.\n";
-						client->Send(msg);
-					}
-					break;
-
-
-					// Updates opponent's move locally and awaits player's move
-				case GameMessage::YourTurn :
-					{
-						std::cout << "[" << client->GetID() <<"] Move Recieved.\n";
-
-						std::string	move;
-						msg >> move;
-						Player.movePiece(translateString(move.substr(0,2)), translateString(move.substr(2,2)), false);
-						MyTurn();
-					}
-					break;
-
-
-					// Message recieved to start the game
-				case GameMessage::Game_BeginGame : {
-										     MyTurn();
-									     }			// Inform the other player about starting the game
-									     break;
-
-
-									     // Message recieved to end the game
-									     // display the result and exit
-//				case GameMessage::Game_EndGame : 
-//									     {}
+//		virtual void OnMessage( std::shared_ptr< net::connection<GameMessage> > client, net::message< GameMessage >& msg)
+//		{
+//			switch(msg.header.id)
+//			{
+//				// Return a unique value based on the board's state 
+//				// Like a parity function 
+//				// and match them to check if both boards are in sync.
+//				// case GameMessage::GetStatus : 
+//				// {}	
+//				// break;
+//
+//
+//				// Server has accepted the client
+//				// Game may begin
+//				case GameMessage::Client_Accepted : 
+//					{
+//						std::cout<<"I HVE BEEN ACCEpTED\n";
+//						net::message<GameMessage> msg;
+//						msg.header.id = GameMessage::Game_BeginGame;
+//						client->Send(msg);
+//					}	
+//					break;
+//
+//
+//					// Ping from server
+//				case GameMessage::Ping :
+//					{
+//						std::cout << "[" << client->GetID() <<"] Ping Recieved.\n";
+//						client->Send(msg);
+//					}
+//					break;
+//
+//
+//					// Updates opponent's move locally and awaits player's move
+//				case GameMessage::YourTurn :
+//					{
+//						std::cout << "[" << client->GetID() <<"] Move Recieved.\n";
+//
+//						std::string	move;
+//						msg >> move;
+//						Player.movePiece(translateString(move.substr(0,2)), translateString(move.substr(2,2)), false);
+//						MyTurn();
+//					}
+//					break;
+//
+//
+//					// Message recieved to start the game
+//				case GameMessage::Game_BeginGame : {
+//										     
+//									     }			// Inform the other player about starting the game
 //									     break;
 //
 //
-//									     // Updates opponent's move locally 
-//									     // ??  DUPLICATE ??
-//				case GameMessage::Game_UpdatePlayer :
-//									     {
-//										     string moved;
-//										     msg >> moved;
-//									     }
-//									     break;	
-			}
-		}
+//									     // Message recieved to end the game
+//									     // display the result and exit
+////				case GameMessage::Game_EndGame : 
+////									     {}
+////									     break;
+////
+////
+////									     // Updates opponent's move locally 
+////									     // ??  DUPLICATE ??
+////				case GameMessage::Game_UpdatePlayer :
+////									     {
+////										     string moved;
+////										     msg >> moved;
+////									     }
+////									     break;	
+//			}
+//		}
 };
 
 

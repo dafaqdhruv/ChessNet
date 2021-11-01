@@ -38,9 +38,9 @@ static void updateBoard(std::string pos, tilePiece updateVal)
 	
 	
 
-	std::cout<<chessBoard[y][x]<<"I CHANGED IT ";
+//	std::cout<<chessBoard[y][x]<<"I CHANGED IT ";
 	chessBoard[y][x] = updateVal;
-	std::cout<<chessBoard[y][x]<<" & y, x "<<y<<" "<<x<<std::endl;
+//	std::cout<<chessBoard[y][x]<<" & y, x "<<y<<" "<<x<<std::endl;
 }
 namespace moves {
 	static std::string intsToStringPos( int x, int y){

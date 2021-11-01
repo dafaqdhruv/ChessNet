@@ -37,7 +37,7 @@ void  *checkForUpdates(void *threadArg){
 	ChessClient* Client = (ChessClient*) threadArg;
 
 	while(1){
-	
+//		std::cout<<"waiting\n";
 		// If the client is connected
 		if (Client->IsConnected())
 		{
@@ -68,7 +68,9 @@ void  *checkForUpdates(void *threadArg){
 					case GameMessage::Client_Accepted : 
 						{
 							std::cout<<"I HVE BEEN ACCEpTED\n";
-							Client->MyTurn();
+							net::message<GameMessage> msg;
+							msg.header.id = GameMessage::Game_BeginGame;
+							Client->Send(msg);
 						}	
 						break;
 
@@ -76,7 +78,9 @@ void  *checkForUpdates(void *threadArg){
 						// Ping from server
 					case GameMessage::Ping :
 						{
-							std::cout << "[" << source->GetID() <<"] Ping Recieved.\n";
+					std::cout<<"Hey!, I'm inside the switch statement\n.";
+						//	std::cout << "[" << source->GetID() <<"] Ping Recieved."<<std::endl;
+				//for(auto i : message.body)std::cout<<(std::chrono::system_clock::time_point)i;
 							Client->Send(message);
 						}
 						break;
@@ -85,10 +89,15 @@ void  *checkForUpdates(void *threadArg){
 						// Updates opponent's move locally and awaits player's move
 					case GameMessage::YourTurn :
 						{
-							std::cout << "[" << source->GetID() <<"] Move Recieved.\n";
+						//	std::cout << "[" << source->GetID() <<"] Move Recieved.\n";
 
-							std::string	move;
-							message >> move;
+							std::string	move = "";
+							char temp;
+							for(int i = 0; i<4; i++){
+								message >> temp;
+								move = temp+move;
+							}
+							std::cout << " Move Recieved."<<move<<std::endl;
 							Client->Player.movePiece(translateString(move.substr(0,2)), translateString(move.substr(2,2)), false);
 							Client->MyTurn();
 						}

@@ -54,9 +54,11 @@ class gameWindow : public QMainWindow
 		}
 
 		void myTurn(){
+		//	std::cout<<"Monseur jem apalle MYTURN\n";
 			selectable = true;
 		}
 		void notMyTurn(){
+		//	std::cout<<"Ayo the not my turn fucn\n";
 			selectable = false;
 		}
 
@@ -70,6 +72,7 @@ class gameWindow : public QMainWindow
 			auto fromTile = getTileByPos(from);
 			auto toTile = getTileByPos(to);
 
+			if(!myMove)std::cout<<"FROM "<<from<<" TO "<<to<<std::endl;
 			auto pieceType = fromTile->getPiece();
 
 			fromTile->reset();
@@ -82,15 +85,16 @@ class gameWindow : public QMainWindow
 			updateBoard(translateInt(to), pieceType);
 			
 			if(myMove){
-				std::string out = "";
-				out+=translateInt(from);
-				out+=translateInt(to);
+				char out[4];
+				out[0] = translateInt(from)[0];
+				out[1] = translateInt(from)[1];
+				out[2] = translateInt(to)[0];
+				out[3] = translateInt(to)[1];
 				emit moved(out);
-				std::cout<<"HEY YOUE "<<out<<std::endl;
 			}
 		}
 	signals :
-		void moved(const std::string);
+		void moved(const char arr[4]);
 
 	private : 
 
@@ -119,9 +123,9 @@ class gameWindow : public QMainWindow
 			if(isPlayerWhite){
 				currentlySelectedTile = tiles[7][7];
 			} else {
-				currentlySelectedTile = tiles[0][0];
+				currentlySelectedTile = tiles[7][0];
 			}
-
+			std::cout<<"CURRENTLY SELECTED TILE ==> "<<currentlySelectedTile->name()<<std::endl;
 			box->setLayout(chessGridLayout);
 		}
 
@@ -130,10 +134,13 @@ class gameWindow : public QMainWindow
 		}
 
 		void selectTile(int pos)
-		{	
+		{
+			// If it is Player's turn 
 			if(selectable){
+
 				auto temp = currentlySelectedTile->getPossibleMoves();
 				bool isMovePossible =  false;
+
 				for(auto i : temp) if(i == pos) isMovePossible = true;
 				for(auto i : temp)
 					getTileByPos(i)->unselect();
@@ -143,18 +150,19 @@ class gameWindow : public QMainWindow
 					movePiece(translateString(currentlySelectedTile->name()), pos);
 					currentlySelectedTile = getTileByPos(pos);
 				}
-				else { // might remove the else completely
+				else { 
 					auto selectedTile = getTileByPos(pos);
-					if(selectedTile->getPiece()*currentlySelectedTile->getPiece()>0){
-					selectedTile->select();
-					currentlySelectedTile = selectedTile;
+					//if(selectedTile->getPiece()*currentlySelectedTile->getPiece()>0){
+					if(((selectedTile->getPiece()>0) && isPlayerWhite) || ((selectedTile->getPiece() < 0) && !isPlayerWhite)){
+						selectedTile->select();
+						currentlySelectedTile = selectedTile;
 
-					showPossibleMoves(selectedTile);
+						showPossibleMoves(selectedTile);
 					}
 
-					//		std::cout<<"Tile number selected :"<<pos<<"\t\t"<<selectedTile->height()<<"  "<<selectedTile->width()<<std::endl;
+					//std::cout<<"Tile number selected :"<<pos<<"\t\t"<<selectedTile->height()<<"  "<<selectedTile->width()<<std::endl;
 					//std::cout<<"Tile number selected :"<<selectedTile->name()<<"\t\t"<<translateString(selectedTile->name())<<"    "<<selectedTile->height()<<"  "<<selectedTile->width()<<std::endl;
-					//		std::cout<<"Tile number selected :"<<selectedTile->name()<<"\t\t"<<translateString(selectedTile->name())<<"   Board val is "<<ChessBoard<<<<std::endl;
+					std::cout<<"Tile number selected :"<<selectedTile->name()<<"\t\t"<<translateString(selectedTile->name())<<std::endl;
 				}
 			}
 
