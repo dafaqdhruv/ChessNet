@@ -22,6 +22,8 @@ int main(int argc, char *argv[]){
 		// Initialise the Client Game Object  with args
 		// (#serverIP, #serverPort, Affiliation)
 		// { true/false : white/black }
+		//
+		std::cout<<"IP i received was :: "<<ip<<std::endl;
 		ChessClient* Client = new ChessClient(server_IP, 60000, false);
 
 		// create new thread for this.
