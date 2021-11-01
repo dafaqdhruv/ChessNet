@@ -1,6 +1,6 @@
 #include <QApplication>
 #include "ChessCommon.hpp"
-
+#include "clientConnect.hpp"
 
 void* checkForUpdates(void* threadArg);
 
@@ -8,24 +8,28 @@ int main(int argc, char *argv[]){
 	
 	QApplication app(argc, argv);
 	std::string server_IP;
+//	if(argc>1) {
+//		server_IP = argv[1];
+//	} else {
+//		std::cout << "Enter IP addr to connect to : ";
+//		std::cin >> server_IP;
+//	}
 
-	if(argc>1) {
-		server_IP = argv[1];
-	} else {
-		std::cout << "Enter IP addr to connect to : ";
-		std::cin >> server_IP;
-	}
 
+	clientConnect dialog;
+	QObject::connect(&dialog, &clientConnect::exportIP6, [=](const std::string ip){
 
-	// Initialise the Client Game Object  with args
-	// (#serverIP, #serverPort, Affiliation)
-	// { true/false : white/black }
-	ChessClient* Client = new ChessClient(server_IP, 60000, false);
+		// Initialise the Client Game Object  with args
+		// (#serverIP, #serverPort, Affiliation)
+		// { true/false : white/black }
+		ChessClient* Client = new ChessClient(server_IP, 60000, false);
 
-	// create new thread for this.
-	pthread_t clientThread;
-	int rc = pthread_create(&clientThread, NULL, checkForUpdates, (void*)Client);
-	
+		// create new thread for this.
+		pthread_t clientThread;
+		int rc = pthread_create(&clientThread, NULL, checkForUpdates, (void*)Client);
+	});
+
+	dialog.show();
 	// GUI runs in main thread
 	app.exec();
 

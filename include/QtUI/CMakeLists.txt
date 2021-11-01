@@ -207,6 +207,7 @@ qt_add_executable(client
 	board.hpp
 	gameTile.hpp
 	gameWindow.hpp
+      clientConnect.hpp
       ChessCommon.hpp
       chess_client.cpp
 )
