@@ -1,1 +1,0 @@
-add_library(ChessNetLib Network.h NetCommon.h NetMessage.h NetConnection.h Net_TSQueue.h NetServer.h NetClient.h bundle.cpp)
