@@ -16,6 +16,7 @@ endif()
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_PREFIX_PATH "~/Qt/6.1.3/gcc_64/lib/cmake")
 set(INSTALL_DIR "build")
+#set(SOURCE_DIR "src")
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
@@ -28,6 +29,9 @@ find_package(Qt6 COMPONENTS Network REQUIRED)
 
 add_subdirectory(network)
 include_directories(network)
+add_subdirectory(src)
+include_directories(src)
+
 find_package(Threads REQUIRED)
 
 #qt_add_executable(connectClient
@@ -45,10 +49,10 @@ find_package(Threads REQUIRED)
 #    main.cpp
 #)
 qt_add_executable(setupGameWindow
-	board.hpp
-	gameTile.hpp
-	gameWindow.hpp
-	gameWindow.cpp
+	include/board.hpp
+	include/gameTile.hpp
+	include/gameWindow.hpp
+	src/gameWindow.cpp
 )
 
 set_target_properties(setupGameWindow PROPERTIES
@@ -161,11 +165,11 @@ install(TARGETS setupGameWindow
 
 
 qt_add_executable(server
-	board.hpp
-	gameTile.hpp
-	gameWindow.hpp
-      ChessCommon.hpp
-      chess_server.cpp
+	include/board.hpp
+	include/gameTile.hpp
+	include/gameWindow.hpp
+	include/ChessCommon.hpp
+	src/chess_server.cpp
 )
 
 set_target_properties(server PROPERTIES
@@ -204,12 +208,12 @@ install(TARGETS server
 )
 
 qt_add_executable(client
-	board.hpp
-	gameTile.hpp
-	gameWindow.hpp
-      clientConnect.hpp
-      ChessCommon.hpp
-      chess_client.cpp
+	include/board.hpp
+	include/gameTile.hpp
+	include/gameWindow.hpp
+	include/clientConnect.hpp
+	include/ChessCommon.hpp
+	src/chess_client.cpp
 )
 
 set_target_properties(client PROPERTIES

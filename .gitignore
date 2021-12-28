@@ -39,6 +39,7 @@ build/CMakeCache.txt
 cmake_install.cmake
 bin/
 build/
+Appdir/
 **/Makefile
 CMakeLists.txt.user
 **/CMakeFiles/

@@ -30,7 +30,7 @@ pushd "$BUILD_DIR"
 
 # configure build files with CMake
 # we need to explicitly set the install prefix, as CMake's default is /usr/local for some reason...
-QMAKE=/home/dfqm8/Qt/6.1.3/gcc_64/bin
+#QMAKE=/home/dfqm8/Qt/6.1.3/gcc_64/bin
 cmake "$REPO_ROOT" -DCMAKE_INSTALL_PREFIX=/usr
 
 # build project and install files into ChessNetDir
@@ -48,9 +48,10 @@ chmod +x linuxdeploy*.AppImage
 # make sure Qt plugin finds QML sources so it can deploy the imported files
 export QML_SOURCES_PATHS="$REPO_ROOT"/src
 
+QMAKE="$REPO_ROOT"/Qt/6.1.3/gcc_64/bin
 # initialize ChessNetDir, bundle shared libraries for QtQuickApp, use Qt plugin to bundle additional resources, and build AppImage, all in one single command
-#./linuxdeploy-x86_64.AppImage --appdir ChessNetDir --plugin qt --output ChessNetImg
-./linuxdeploy-x86_64.AppImage --appdir ChessNetDir
+./linuxdeploy-x86_64.AppImage --appdir ChessNetDir --plugin qt --output ChessNetImg
+#./linuxdeploy-x86_64.AppImage --appdir ChessNetDir
 
 # move built AppImage back into original CWD
 mv ChessNet*.AppImage "$OLD_CWD"
