@@ -1,0 +1,1 @@
+add_library(ChessLib board.hpp ChessCommon.hpp clientConnect.hpp commonWindows.hpp gameTile.hpp gameWindow.hpp NetTranslator.h setupServer.hpp)
