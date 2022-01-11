@@ -14,7 +14,6 @@ Download and Install ASIO from [here](https://think-async.com/Asio/)  or from Bo
 or check your package manager for easier setup.  
 Make sure Qt is installed and properly configured. (preferably Qt 6.1.3)  
 
->!THis is a spoiler
 ##### To Build
 Clone the repository.  
 Navigate to repo directory.  
