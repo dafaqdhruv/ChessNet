@@ -40,6 +40,10 @@ namespace net
 				// Construct random data for the client to send back for validation
 				m_nHandshakeOut = validate;
 				m_nHandshakeCheck = scramble(m_nHandshakeOut);
+				
+				//Broadcastif server
+//				asio::socket_base::broadcast option(true);
+//				m_socket.set_option(option);
 
 			}
 			else
