@@ -43,7 +43,7 @@ The Client-side asks for the IP address, connects and starts the game if IP is v
  Things I have in mind :  
 > - Hole Punching and other NAT traversal algorithms
 >
->Till then, use port forwarding to forward port 60000 to your server side machine.  
+>Till then, **use port forwarding to forward port 60000 to your server side machine.**  
 >  ~~OR, Just disable NAT on server side networks and use IPv6.~~  
 
 ## How to Play
