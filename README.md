@@ -9,12 +9,12 @@ The Networking module of this project has been inspired from his [olcPixelGameEn
   
 And Bryan Ford for his amazing [paper](https://bford.info/pub/net/p2pnat/index.html) on NAT Traversal techniques.  
 
-## How to build
+# How to build
 Download and Install ASIO from [here](https://think-async.com/Asio/)  or from Boost C++ library.  
 or check your package manager for easier setup.  
 Make sure Qt is installed and properly configured. (preferably Qt 6.1.3)  
 
-##### To Build
+### To Build
 Clone the repository.  
 Navigate to repo directory.  
 Type the following commands in terminal :
@@ -26,7 +26,7 @@ cmake --build .
 ```  
 You might have to edit `CMakeLists.txt` in order to get it working.  
 
-## Run 
+# Run 
 Once you've built the executables, you're ready to start playing!  
 The `ChessNet-server` is the host side of the game.  Use it to host the game.  
 The Server-side application sets up the game and waits for the opponent to connect.  
@@ -45,11 +45,19 @@ The Client-side asks for the IP address, connects and starts the game if IP is v
 >
 >Till then, **use port forwarding to forward port 60000 to your server side machine.**  
 >  ~~OR, Just disable NAT on server side networks and use IPv6.~~  
+  
+    
+# What to expect
 
-## How to Play
+https://user-images.githubusercontent.com/44937984/151779506-6bd4dc10-a878-46e3-b156-74a308e937f9.mp4
 
-![A Master at play](icons/catto.jpg "A Master at play")  
-![He clearly has many years of experience](icons/exp.gif "He Clearly has many years of experience")
+
+
+
+# How to Play
+
+<img src="icons/catto.jpg" width = 400 height = 400 alt = "A master at play"> </img>
+<img src="icons/exp.gif" width = 400 height = 400 alt="He Clearly has many years of experience"></img>
 
 ## Some Issues and plans
 
