@@ -46,13 +46,6 @@ The Client-side asks for the IP address, connects and starts the game if IP is v
 >Till then, **use port forwarding to forward port 60000 to your server side machine.**  
 >  ~~OR, Just disable NAT on server side networks and use IPv6.~~  
   
-    
-# What to expect
-
-https://user-images.githubusercontent.com/44937984/151779506-6bd4dc10-a878-46e3-b156-74a308e937f9.mp4
-
-
-
 
 # How to Play
 
