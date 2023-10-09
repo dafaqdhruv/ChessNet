@@ -49,7 +49,10 @@ static std::string translateInt (int pos)
 	out += (char)(7 - pos/8 + '1');
 	return out;
 }
-static int translateString(std::string pos)
+
+// Should be passed std::string or char*
+template <typename T>
+static int translateString(T pos)
 {
 	return (int)((pos[0]-'a') + (7-(pos[1]-'1'))*8);
 }

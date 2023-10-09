@@ -5,14 +5,10 @@
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
-    clientConnect dialog;
+    ClientConnect dialog;
 
-    QObject::connect(&dialog, &clientConnect::exportIP6,[](const std::string ip){std::cout<<ip<<" okay this.\n";});
-#ifdef Q_OS_ANDROID
-    dialog.showMaximized();
-#else
+    QObject::connect(&dialog, &ClientConnect::exportIP6,[](const std::string ip){std::cout<<ip<<" okay this.\n";});
     dialog.show();
-#endif
 
     return app.exec();
 }

@@ -38,7 +38,6 @@ QT_END_NAMESPACE
 class gameWindow : public QMainWindow
 
 {
-
 	Q_OBJECT
 
 	public :
@@ -53,13 +52,8 @@ class gameWindow : public QMainWindow
 			setMinimumSize(800, 800);
 		}
 
-		void myTurn(){
-		//	std::cout<<"Monseur jem apalle MYTURN\n";
-			selectable = true;
-		}
-		void notMyTurn(){
-		//	std::cout<<"Ayo the not my turn fucn\n";
-			selectable = false;
+		void makeTilesSelectable(bool selectable){
+			this -> selectable = selectable;
 		}
 
 		void reset();

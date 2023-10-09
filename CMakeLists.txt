@@ -34,7 +34,6 @@ include_directories(src)
 
 find_package(Threads REQUIRED)
 
-
 qt_add_executable(setupGameWindow
 	include/board.hpp
 	include/gameTile.hpp
@@ -83,6 +82,7 @@ qt_add_executable(server
 	include/gameTile.hpp
 	include/gameWindow.hpp
 	include/ChessCommon.hpp
+	include/easylogging++.cc
 	src/chess_server.cpp
 )
 
@@ -130,6 +130,7 @@ qt_add_executable(client
 	include/gameWindow.hpp
 	include/clientConnect.hpp
 	include/ChessCommon.hpp
+	include/easylogging++.cc
 	src/chess_client.cpp
 )
 

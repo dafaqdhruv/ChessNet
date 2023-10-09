@@ -21,7 +21,7 @@ class QPushButton;
 class QTextEdit;
 QT_END_NAMESPACE
 
-class clientConnect : public QDialog
+class ClientConnect : public QDialog
 {
     Q_OBJECT
 
@@ -34,7 +34,7 @@ public:
 		connectButton -> setAutoDefault(true);
 		connectButton -> setMaximumWidth(70);
 
-		connect(connectButton, &QPushButton::clicked, this, &clientConnect::getIP6);
+		connect(connectButton, &QPushButton::clicked, this, &ClientConnect::getIP6);
 
 		QVBoxLayout *mainLayout = new QVBoxLayout;
 

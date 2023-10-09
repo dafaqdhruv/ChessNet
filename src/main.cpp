@@ -13,9 +13,9 @@ void boom(){
   //      player.show();
 }
 void baam(){
-  clientConnect clientConnectWin;
+  ClientConnect clientConnectWin;
   std::string IP6;
-  QObject::connect(&clientConnectWin, &clientConnect::exportIP6, [&IP6](const std::string ret){IP6 = ret;
+  QObject::connect(&ClientConnectWin, &ClientConnect::exportIP6, [&IP6](const std::string ret){IP6 = ret;
   std::cout<<"Yo i just made a client type player "<<IP6<<"\n";
       });
   clientConnectWin.show();

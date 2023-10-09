@@ -21,12 +21,12 @@ class QPushButton;
 class QTextEdit;
 QT_END_NAMESPACE
 
-class clientConnect : public QDialog
+class ClientConnect : public QDialog
 {
     Q_OBJECT
 
 public:
-	clientConnect()
+	ClientConnect()
 	{
 		createFormGroupBox();
 
@@ -34,8 +34,8 @@ public:
 		connectButton -> setAutoDefault(true);
 		connectButton -> setMaximumWidth(70);
 
-		connect(connectButton, &QPushButton::clicked, this, &clientConnect::getIP6);
-		connect(this, &clientConnect::exportIP6, this, &QDialog::accept);
+		connect(connectButton, &QPushButton::clicked, this, &ClientConnect::getIP6);
+		connect(this, &ClientConnect::exportIP6, this, &QDialog::accept);
 		QVBoxLayout *mainLayout = new QVBoxLayout;
 
 		mainLayout->addWidget(formGroupBox);
@@ -97,7 +97,8 @@ private:
 			}
 		}
 	}
-signals :
+
+signals:
 	void exportIP6(const std::string &IP);
 };
 

@@ -1,38 +1,30 @@
 #include <QApplication>
+
 #include "../include/ChessCommon.hpp"
 #include "../include/clientConnect.hpp"
+
+INITIALIZE_EASYLOGGINGPP
 
 void* checkForUpdates(void* threadArg);
 
 int main(int argc, char *argv[]){
-
 	QApplication app(argc, argv);
-	std::string server_IP;
-//	if(argc>1) {
-//		server_IP = argv[1];
-//	} else {
-//		std::cout << "Enter IP addr to connect to : ";
-//		std::cin >> server_IP;
-//	}
 
+	ClientConnect dialog;
+	QObject::connect(
+		&dialog,
+		&ClientConnect::exportIP6,
+		[=](const std::string SERVER_IP){
+			ChessClient* Client = new ChessClient(SERVER_IP, DEFAULT_PORT, BLACK);
 
-	clientConnect dialog;
-	QObject::connect(&dialog, &clientConnect::exportIP6, [=](const std::string ip){
+			CLOG(INFO, "Client") << "Connection established to: " + SERVER_IP;
 
-		// Initialise the Client Game Object  with args
-		// (#serverIP, #serverPort, Affiliation)
-		// { true/false : white/black }
-		//
-		std::cout<<"IP i received was :: "<<ip<<std::endl;
-		ChessClient* Client = new ChessClient(ip, 60000, false);
-
-		// create new thread for this.
-		pthread_t clientThread;
-		int rc = pthread_create(&clientThread, NULL, checkForUpdates, (void*)Client);
-	});
+			pthread_t clientThread;
+			int rc = pthread_create(&clientThread, NULL, checkForUpdates, (void*)Client);
+		}
+	);
 
 	dialog.show();
-	// GUI runs in main thread
 	app.exec();
 
 	return 0;
@@ -43,87 +35,58 @@ void  *checkForUpdates(void *threadArg){
 	ChessClient* Client = (ChessClient*) threadArg;
 
 	while(1){
-//		std::cout<<"waiting\n";
-		// If the client is connected
-		if (Client->IsConnected())
+		if (!Client -> IsConnected())
 		{
-			// if there is an incoming message in queue
-			if (!Client->Incoming().empty())
-			{
-
-				// Fetch the message and parse it
-				auto message_packet = Client->Incoming().pop_front();
-				auto source = message_packet.remote;
-				auto message = message_packet.msg;
-
-				// Debug message
-				std::cout<<"Message has arrived :: "<<(int)message.header.id<<std::endl;
-
-				switch(message.header.id)
-				{
-					// Return a unique value based on the board's state
-					// Like a parity function
-					// and match them to check if both boards are in sync.
-					// case GameMessage::GetStatus :
-					// {}
-					// break;
-
-
-					// Server has accepted the client
-					// Game may begin
-					case GameMessage::Client_Accepted :
-						{
-							std::cout<<"I HVE BEEN ACCEpTED\n";
-							net::message<GameMessage> msg;
-							msg.header.id = GameMessage::Game_BeginGame;
-							Client->Send(msg);
-						}
-						break;
-
-
-						// Ping from server
-					case GameMessage::Ping :
-						{
-					std::cout<<"Hey!, I'm inside the switch statement\n.";
-						//	std::cout << "[" << source->GetID() <<"] Ping Recieved."<<std::endl;
-				//for(auto i : message.body)std::cout<<(std::chrono::system_clock::time_point)i;
-							Client->Send(message);
-						}
-						break;
-
-
-						// Updates opponent's move locally and awaits player's move
-					case GameMessage::YourTurn :
-						{
-						//	std::cout << "[" << source->GetID() <<"] Move Recieved.\n";
-
-							std::string	move = "";
-							char temp;
-							for(int i = 0; i<4; i++){
-								message >> temp;
-								move = temp+move;
-							}
-							std::cout << " Move Recieved."<<move<<std::endl;
-							Client->Player.movePiece(translateString(move.substr(0,2)), translateString(move.substr(2,2)), false);
-							Client->MyTurn();
-						}
-						break;
-
-
-						// Message recieved to start the game
-					case GameMessage::Game_BeginGame : {
-							Client->MyTurn();
-						}			// Inform the other player about starting the game
-						break;
-				}
-			}
+			CLOG(FATAL, "Client") << "Server Down";
+			pthread_exit(NULL);
 		}
 
-		// If the connection does not exist
-		// Throw error and exit
-		else {
-			std::cout << "Server Down\n";
-			pthread_exit(NULL);
+		if (!Client->Incoming().empty())
+		{
+			auto message_packet = Client->Incoming().pop_front();
+			auto source = message_packet.remote;
+			auto message = message_packet.msg;
+
+			CLOG(INFO, "Client") <<"Message received: "<<(int)message.header.id;
+
+			switch(message.header.id)
+			{
+			case GameMessage::GetStatus : {
+				CLOG(INFO, "Client") << "Opponent request status. Sending board info.";
+			}
+			break;
+
+			case GameMessage::Client_Accepted :	{
+				CLOG(INFO, "Client") << "Server accept. Requesting game start.";
+
+				net::message<GameMessage> msg;
+				msg.header.id = GameMessage::Game_BeginGame;
+				Client->Send(msg);
+			}
+			break;
+
+			case GameMessage::Ping : {
+				CLOG(INFO, "Client") << "Server Ping. Pinging back.";
+				Client->Send(message);
+			}
+			break;
+
+			case GameMessage::YourTurn : {
+				bool is_my_move = false;
+
+
+				char move[4];
+				for(int8_t i = 3; i>=0; i--){
+					message >> move[i];
+				}
+
+				CLOG(INFO, "Client") << "Opponent move: " << std::string(move);
+
+				Client -> Player.movePiece(translateString(&move[0]), translateString(&move[2]), is_my_move);
+				Client -> MyTurn();
+			}
+			break;
+			}
 		}
 	}
 }
