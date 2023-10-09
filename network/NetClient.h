@@ -7,7 +7,7 @@ namespace net
 	class client_interface
 	{
 	public:
-		client_interface() 
+		client_interface()
 		{}
 
 		virtual ~client_interface()
@@ -28,7 +28,7 @@ namespace net
 
 				// Create connection
 				m_connection = std::make_unique<connection<T>>(connection<T>::owner::client, m_context, asio::ip::tcp::socket(m_context), m_qMessagesIn, validate);
-				
+
 				// Tell the connection object to connect to server
 				m_connection->ConnectToServer(endpoints);
 
@@ -53,7 +53,7 @@ namespace net
 				m_connection->Disconnect();
 			}
 
-			// Either way, we're also done with the asio context...				
+			// Either way, we're also done with the asio context...
 			m_context.stop();
 			// ...and its thread
 			if (thrContext.joinable())
@@ -77,12 +77,12 @@ namespace net
 		void Send(const message<T>& msg)
 		{
 			if (IsConnected())
-				 m_connection->Send(msg);
+				m_connection->Send(msg);
 		}
 
 		// Retrieve queue of messages from server
 		tsqueue<owned_message<T>>& Incoming()
-		{ 
+		{
 			return m_qMessagesIn;
 		}
 
@@ -93,7 +93,7 @@ namespace net
 		std::thread thrContext;
 		// The client has a single instance of a "connection" object, which handles data transfer
 		std::unique_ptr<connection<T>> m_connection;
-		
+
 	private:
 		// This is the thread safe queue of incoming messages from server
 		tsqueue<owned_message<T>> m_qMessagesIn;

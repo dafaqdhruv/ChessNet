@@ -28,25 +28,25 @@ class clientConnect : public QDialog
 public:
 	clientConnect()
 	{
-	    createFormGroupBox();
+		createFormGroupBox();
 
-	    connectButton = new QPushButton("&Connect", this);
-	    connectButton -> setAutoDefault(true);
-	    connectButton -> setMaximumWidth(70);
+		connectButton = new QPushButton("&Connect", this);
+		connectButton -> setAutoDefault(true);
+		connectButton -> setMaximumWidth(70);
 
-	    connect(connectButton, &QPushButton::clicked, this, &clientConnect::getIP6);
+		connect(connectButton, &QPushButton::clicked, this, &clientConnect::getIP6);
 
-	    QVBoxLayout *mainLayout = new QVBoxLayout;
+		QVBoxLayout *mainLayout = new QVBoxLayout;
 
-	    mainLayout->addWidget(formGroupBox);
-	    mainLayout->addSpacing(5);
-	    mainLayout->addWidget(connectButton, 0, Qt::AlignRight);
+		mainLayout->addWidget(formGroupBox);
+		mainLayout->addSpacing(5);
+		mainLayout->addWidget(connectButton, 0, Qt::AlignRight);
 
-	    setLayout(mainLayout);
+		setLayout(mainLayout);
 
-	    setWindowTitle(tr("Connect to Server"));
-	    setMinimumSize(360, 135);
-	    setMaximumSize(360, 135);
+		setWindowTitle(tr("Connect to Server"));
+		setMinimumSize(360, 135);
+		setMaximumSize(360, 135);
 	}
 
 
@@ -71,8 +71,8 @@ private:
 		formGroupBox->setLayout(layout);
 	}
 
-    	void getIP6(){
-	
+	void getIP6(){
+
 		ipAddress = QHostAddress(ipLineEdit->displayText());
 
 		if(ipAddress.isNull()){
@@ -80,10 +80,10 @@ private:
 			errorBox.setText("Invalid IP Address.");
 			errorBox.exec();
 		} else {
-			
+
 			QMessageBox continueBox;
 			continueBox.setText("IP address is valid. Are you sure you want to connect to this host?");
-			
+
 			QPushButton *yesButton = continueBox.addButton("&Yes", QMessageBox::YesRole);
 			QPushButton *noButton = continueBox.addButton("&No", QMessageBox::NoRole);
 			continueBox.exec();
@@ -97,7 +97,7 @@ private:
 			}
 		}
 	}
-signals : 
+signals :
 	void exportIP6(const std::string &IP);
 };
 
@@ -108,30 +108,30 @@ class setupServer : public QDialog
 public:
 	setupServer()
 	{
-	    scrambler = "";
+		scrambler = "";
 
-	    continueButton = new QPushButton("&Continue", this);
-	    continueButton -> setAutoDefault(true);
-	    continueButton -> setMaximumWidth(70);
-	    connect(continueButton, &QPushButton::clicked, this, &setupServer::getScrambler);
+		continueButton = new QPushButton("&Continue", this);
+		continueButton -> setAutoDefault(true);
+		continueButton -> setMaximumWidth(70);
+		connect(continueButton, &QPushButton::clicked, this, &setupServer::getScrambler);
 
-	    scramblerLineEdit = new QLineEdit("", this);
-	    scramblerLineEdit -> setMaxLength(10);
-	    scramblerLineEdit -> setMaximumWidth(95);
+		scramblerLineEdit = new QLineEdit("", this);
+		scramblerLineEdit -> setMaxLength(10);
+		scramblerLineEdit -> setMaximumWidth(95);
 
-	    QVBoxLayout *mainLayout = new QVBoxLayout;
+		QVBoxLayout *mainLayout = new QVBoxLayout;
 
-	    mainLayout -> addWidget(new QLabel("Enter scrambler value :"));
-	    mainLayout -> addSpacing(10);
-	    mainLayout -> addWidget(scramblerLineEdit, 0, Qt::AlignCenter);
-	    mainLayout -> addSpacing(10);
-	    mainLayout -> addWidget(continueButton, 0, Qt::AlignRight);
+		mainLayout -> addWidget(new QLabel("Enter scrambler value :"));
+		mainLayout -> addSpacing(10);
+		mainLayout -> addWidget(scramblerLineEdit, 0, Qt::AlignCenter);
+		mainLayout -> addSpacing(10);
+		mainLayout -> addWidget(continueButton, 0, Qt::AlignRight);
 
-	    setLayout(mainLayout);
+		setLayout(mainLayout);
 
-	    setWindowTitle(tr("Setup Scrambler"));
-	    setMinimumSize(200, 130);
-	    setMaximumSize(200, 130);
+		setWindowTitle(tr("Setup Scrambler"));
+		setMinimumSize(200, 130);
+		setMaximumSize(200, 130);
 	}
 
 signals: void exportScrambler(const int out);
@@ -141,7 +141,7 @@ private:
 	QHostAddress ipAddress;
 	std::string  scrambler;
 
-    	void getScrambler(){
+	void getScrambler(){
 		scrambler = scramblerLineEdit->displayText().toStdString();
 		if(scrambler.length()){
 			emit exportScrambler(std::stoi(scrambler));
@@ -158,26 +158,26 @@ public:
 	askMediumDialog()
 	{
 
-	    continueButton = new QPushButton("&Continue", this);
-	    continueButton -> setAutoDefault(true);
-	    continueButton -> setMaximumWidth(70);
-	    connect(continueButton, &QPushButton::clicked, this, &askMediumDialog::getRadio);
+		continueButton = new QPushButton("&Continue", this);
+		continueButton -> setAutoDefault(true);
+		continueButton -> setMaximumWidth(70);
+		connect(continueButton, &QPushButton::clicked, this, &askMediumDialog::getRadio);
 		QObject::connect(continueButton, SIGNAL(clicked()), this, SLOT(accept()));
-	    QVBoxLayout *mainLayout = new QVBoxLayout;
+		QVBoxLayout *mainLayout = new QVBoxLayout;
 
-	    client = new QRadioButton("Client", this);
-	    server = new QRadioButton("Server", this);
-	    mainLayout -> addWidget(client, 50, Qt::AlignCenter);
-	    mainLayout -> addSpacing(10);
-	    mainLayout -> addWidget(server, 50, Qt::AlignCenter);
-	    mainLayout -> addSpacing(10);
-	    mainLayout -> addWidget(continueButton, 0, Qt::AlignRight);
+		client = new QRadioButton("Client", this);
+		server = new QRadioButton("Server", this);
+		mainLayout -> addWidget(client, 50, Qt::AlignCenter);
+		mainLayout -> addSpacing(10);
+		mainLayout -> addWidget(server, 50, Qt::AlignCenter);
+		mainLayout -> addSpacing(10);
+		mainLayout -> addWidget(continueButton, 0, Qt::AlignRight);
 
-	    setLayout(mainLayout);
+		setLayout(mainLayout);
 
-	    setWindowTitle(tr("Setup Scrambler"));
-	    setMinimumSize(200, 130);
-	    setMaximumSize(200, 130);
+		setWindowTitle(tr("Setup Scrambler"));
+		setMinimumSize(200, 130);
+		setMaximumSize(200, 130);
 	}
 
 signals:

@@ -10,11 +10,9 @@ struct args{
 
 
 void *checkForUpdates(void* threadArg);
-void *execThread(void* threadArgs);
-
 
 int main(int argc, char* argv[]){
-    
+
     //args input = {argc, argv};
     QApplication app(argc, argv);
     ChessServer* Server = new ChessServer(60000,7587303549, true);
@@ -23,7 +21,7 @@ int main(int argc, char* argv[]){
     pthread_t updateThread;
     int rc1 = pthread_create(&updateThread, NULL, checkForUpdates, (void*)Server);
 
-    sleep(2);
+    sleep(2); // wait for processes to exit gracefully
     return app.exec();
 }
 

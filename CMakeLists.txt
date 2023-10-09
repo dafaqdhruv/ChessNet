@@ -34,20 +34,7 @@ include_directories(src)
 
 find_package(Threads REQUIRED)
 
-#qt_add_executable(connectClient
-#      clientConnect.hpp
-#      clientConnect.cpp
-#)
 
-#qt_add_executable(setupScrambler
-#	setupServer.cpp
-#	setupServer.hpp   
-#)
-#
-#qt_add_executable(main
-#    commonWindows.hpp
-#    main.cpp
-#)
 qt_add_executable(setupGameWindow
 	include/board.hpp
 	include/gameTile.hpp
@@ -59,12 +46,14 @@ set_target_properties(setupGameWindow PROPERTIES
     WIN32_EXECUTABLE TRUE
     MACOSX_BUNDLE TRUE
 )
+
 target_link_libraries(setupGameWindow PUBLIC
     Qt::Core
     Qt::Gui
     Qt::Widgets
     Qt::Network
 )
+
 qt6_add_resources(setupGameWindow "icons"
     PREFIX
 	  "/"
@@ -82,87 +71,12 @@ qt6_add_resources(setupGameWindow "icons"
 	  "icons/blackPawn.png"
 	  "icons/blackKnight.png"
 )
-#set_target_properties(main PROPERTIES
-#    WIN32_EXECUTABLE TRUE
-#    MACOSX_BUNDLE TRUE
-#)
-#target_link_libraries(main PUBLIC
-#    Qt::Core
-#    Qt::Gui
-#    Qt::Widgets
-#    Qt::Network
-#)
-#qt6_add_resources(main "clientSide"
-#    PREFIX
-#        "/"
-#    FILES
-#        ${application_resource_files}
-#
-#)
-#install(TARGETS main 
-#    RUNTIME DESTINATION "${INSTALL_DIR}"
-#    BUNDLE DESTINATION "${INSTALL_DIR}"
-#    LIBRARY DESTINATION "${INSTALL_DIR}"
-#)
-#set_target_properties(connectClient PROPERTIES
-#    WIN32_EXECUTABLE TRUE
-#    MACOSX_BUNDLE TRUE
-#)
-#target_link_libraries(connectClient PUBLIC
-#    Qt::Core
-#    Qt::Gui
-#    Qt::Widgets
-#    Qt::Network
-#)
-#qt6_add_resources(connectClient "clientSide"
-#    PREFIX
-#        "/"
-#    FILES
-#        ${application_resource_files}
-#
-#)
-
-#set_target_properties(setupScrambler PROPERTIES
-#    WIN32_EXECUTABLE TRUE
-#    MACOSX_BUNDLE TRUE
-#)
-#target_link_libraries(setupScrambler PUBLIC
-#    Qt::Core
-#    Qt::Gui
-#    Qt::Widgets
-#    Qt::Network
-#)
-#
-#qt6_add_resources(setupScrambler "serverSide"
-#    PREFIX
-#        "/"
-#    FILES
-#        ${application_resource_files}
-#)
-#
-#install(TARGETS connectClient 
-#    RUNTIME DESTINATION "${INSTALL_DIR}"
-#    BUNDLE DESTINATION "${INSTALL_DIR}"
-#    LIBRARY DESTINATION "${INSTALL_DIR}"
-#)
-#
-#install(TARGETS setupScrambler
-#    RUNTIME DESTINATION "${INSTALL_DIR}"
-#    BUNDLE DESTINATION "${INSTALL_DIR}"
-#    LIBRARY DESTINATION "${INSTALL_DIR}"
-#)
 
 install(TARGETS setupGameWindow
     RUNTIME DESTINATION "${INSTALL_DIR}"
     BUNDLE DESTINATION "${INSTALL_DIR}"
     LIBRARY DESTINATION "${INSTALL_DIR}"
 )
-#qt_add_executable(main
-#    commonWindows.hpp
-#    main.cpp
-#)
-
-
 
 qt_add_executable(server
 	include/board.hpp
@@ -176,6 +90,7 @@ set_target_properties(server PROPERTIES
     WIN32_EXECUTABLE TRUE
     MACOSX_BUNDLE TRUE
 )
+
 target_link_libraries(server PUBLIC
     Qt::Core
     Qt::Gui
@@ -184,6 +99,7 @@ target_link_libraries(server PUBLIC
     ChessNetLib
     ${CMAKE_THREAD_LIBS_INIT}
 )
+
 qt6_add_resources(server "icons"
     PREFIX
 	  "/"
@@ -201,6 +117,7 @@ qt6_add_resources(server "icons"
 	  "icons/blackPawn.png"
 	  "icons/blackKnight.png"
 )
+
 install(TARGETS server
     RUNTIME DESTINATION "${INSTALL_DIR}"
     BUNDLE DESTINATION "${INSTALL_DIR}"
@@ -220,6 +137,7 @@ set_target_properties(client PROPERTIES
     WIN32_EXECUTABLE TRUE
     MACOSX_BUNDLE TRUE
 )
+
 target_link_libraries(client PUBLIC
     Qt::Core
     Qt::Gui
@@ -228,6 +146,7 @@ target_link_libraries(client PUBLIC
     ChessNetLib
     ${CMAKE_THREAD_LIBS_INIT}
 )
+
 qt6_add_resources(client "icons"
     PREFIX
 	  "/"
@@ -245,6 +164,7 @@ qt6_add_resources(client "icons"
 	  "icons/blackPawn.png"
 	  "icons/blackKnight.png"
 )
+
 install(TARGETS client
     RUNTIME DESTINATION "${INSTALL_DIR}"
     BUNDLE DESTINATION "${INSTALL_DIR}"

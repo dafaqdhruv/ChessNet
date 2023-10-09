@@ -28,30 +28,30 @@ class Dialog : public QDialog
 public:
 	Dialog()
 	{
-	    scrambler = "";
+		scrambler = "";
 
-	    continueButton = new QPushButton("&Continue", this);
-	    continueButton -> setAutoDefault(true);
-	    continueButton -> setMaximumWidth(70);
-	    connect(continueButton, &QPushButton::clicked, this, &Dialog::getScrambler);
+		continueButton = new QPushButton("&Continue", this);
+		continueButton -> setAutoDefault(true);
+		continueButton -> setMaximumWidth(70);
+		connect(continueButton, &QPushButton::clicked, this, &Dialog::getScrambler);
 
-	    scramblerLineEdit = new QLineEdit("", this);
-	    scramblerLineEdit -> setMaxLength(10);
-	    scramblerLineEdit -> setMaximumWidth(95);
+		scramblerLineEdit = new QLineEdit("", this);
+		scramblerLineEdit -> setMaxLength(10);
+		scramblerLineEdit -> setMaximumWidth(95);
 
-	    QVBoxLayout *mainLayout = new QVBoxLayout;
+		QVBoxLayout *mainLayout = new QVBoxLayout;
 
-	    mainLayout -> addWidget(new QLabel("Enter scrambler value :"));
-	    mainLayout -> addSpacing(10);
-	    mainLayout -> addWidget(scramblerLineEdit, 0, Qt::AlignCenter);
-	    mainLayout -> addSpacing(10);
-	    mainLayout -> addWidget(continueButton, 0, Qt::AlignRight);
+		mainLayout -> addWidget(new QLabel("Enter scrambler value :"));
+		mainLayout -> addSpacing(10);
+		mainLayout -> addWidget(scramblerLineEdit, 0, Qt::AlignCenter);
+		mainLayout -> addSpacing(10);
+		mainLayout -> addWidget(continueButton, 0, Qt::AlignRight);
 
-	    setLayout(mainLayout);
+		setLayout(mainLayout);
 
-	    setWindowTitle(tr("Setup Scrambler"));
-	    setMinimumSize(200, 130);
-	    setMaximumSize(200, 130);
+		setWindowTitle(tr("Setup Scrambler"));
+		setMinimumSize(200, 130);
+		setMaximumSize(200, 130);
 	}
 
 signals: void exportScrambler(const std::string out);
@@ -61,7 +61,7 @@ private:
 	QHostAddress ipAddress;
 	std::string  scrambler;
 
-    	void getScrambler(){
+	void getScrambler(){
 		scrambler = scramblerLineEdit->displayText().toStdString();
 		if(scrambler.length()){
 			emit exportScrambler(scrambler);
@@ -70,7 +70,7 @@ private:
 };
 
 
-class askMediumDialog : public QDialog 
+class askMediumDialog : public QDialog
 {
     Q_OBJECT
 
@@ -78,29 +78,29 @@ public:
 	askMediumDialog()
 	{
 
-	    continueButton = new QPushButton("&Continue", this);
-	    continueButton -> setAutoDefault(true);
-	    continueButton -> setMaximumWidth(70);
-	    connect(continueButton, &QPushButton::clicked, this, &askMediumDialog::getRadio);
+		continueButton = new QPushButton("&Continue", this);
+		continueButton -> setAutoDefault(true);
+		continueButton -> setMaximumWidth(70);
+		connect(continueButton, &QPushButton::clicked, this, &askMediumDialog::getRadio);
 
-	    QVBoxLayout *mainLayout = new QVBoxLayout;
-	
-	    client = new QRadioButton("Client", this);
-	    server = new QRadioButton("Server", this);
-	    mainLayout -> addWidget(client, 50, Qt::AlignCenter);
-	    mainLayout -> addSpacing(10);
-	    mainLayout -> addWidget(server, 50, Qt::AlignCenter);
-	    mainLayout -> addSpacing(10);
-	    mainLayout -> addWidget(continueButton, 0, Qt::AlignRight);
+		QVBoxLayout *mainLayout = new QVBoxLayout;
 
-	    setLayout(mainLayout);
+		client = new QRadioButton("Client", this);
+		server = new QRadioButton("Server", this);
+		mainLayout -> addWidget(client, 50, Qt::AlignCenter);
+		mainLayout -> addSpacing(10);
+		mainLayout -> addWidget(server, 50, Qt::AlignCenter);
+		mainLayout -> addSpacing(10);
+		mainLayout -> addWidget(continueButton, 0, Qt::AlignRight);
 
-	    setWindowTitle(tr("Setup Scrambler"));
-	    setMinimumSize(200, 130);
-	    setMaximumSize(200, 130);
+		setLayout(mainLayout);
+
+		setWindowTitle(tr("Setup Scrambler"));
+		setMinimumSize(200, 130);
+		setMaximumSize(200, 130);
 	}
 
-signals: 
+signals:
 	void medium (const bool ret);
 private:
 	QRadioButton *client;
@@ -113,7 +113,7 @@ private:
 		makeServer = server->isChecked();
 		makeClient = client->isChecked();
 		if(makeServer ^ makeClient){
-		
+
 			emit medium(makeServer);			// emit signal for choice
 		}
 		else {

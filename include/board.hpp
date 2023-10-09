@@ -35,8 +35,8 @@ static void updateBoard(std::string pos, tilePiece updateVal)
 {
 	int x = pos[0]-'a';
 	int y = 7 - pos[1]+'1';
-	
-	
+
+
 
 //	std::cout<<chessBoard[y][x]<<"I CHANGED IT ";
 	chessBoard[y][x] = updateVal;
@@ -56,10 +56,10 @@ namespace moves {
 		int y = 7 - position[1] + '1';
 		int x = position[0] - 'a';
 		bool flag = true;
-	
+
 		int delta = 1, temp;
 		if(affiliation) delta = -1;
-		
+
 		for(int i = -1; i<=1; i++){
 			if(x+i >= 0 && x+i <8 && y+delta>=0 && y+delta<8){
 
@@ -74,7 +74,7 @@ namespace moves {
 				}
 			}
 		}
-	
+
 		if(!affiliation && y == 1) {
 			delta = 2;
 			temp = chessBoard[y][x] * chessBoard[y+delta][x];
@@ -95,10 +95,10 @@ namespace moves {
 		int x = position[0] - 'a';
 		int counter = 1;
 		int temp;
-	
+
 		for(int i = -1; i<=1; i+=2){
 			for(int j = -1; j<=1; j+=2){
-	
+
 				counter = 0;
 				do{
 					counter++;
@@ -110,7 +110,7 @@ namespace moves {
 				}while(temp == 0 && x+counter*i >= 0 && x+counter*i <8 && y+counter*j>=0 && y+counter*j<8);
 			}
 		}
-	
+
 		return out;
 	}
 	static std::vector<std::pair<std::string,bool>> fillKnightMoves(std::string position, bool affiliation)
@@ -120,7 +120,7 @@ namespace moves {
 		int x = position[0] - 'a';
 		int counter = 1;
 		int temp;
-		
+
 		std::vector<std::pair<int,int>> points = {{1,2},{1,-2},{2,1},{2,-1},{-1,2},{-1,-2},{-2,1},{-2,-1}};
 		for( auto [i,j] : points){
 			if( x+i >= 0 && x+i <8 && y+j>=0 && y+j<8){
@@ -128,7 +128,7 @@ namespace moves {
 				if(temp <= 0)out.emplace_back(intsToStringPos(x+i, 7-y-j), temp);
 			}
 		}
-	
+
 		return out;
 	}
 	static std::vector<std::pair<std::string,bool>> fillRookMoves(std::string position, bool affiliation)
@@ -138,10 +138,10 @@ namespace moves {
 		int x = position[0] - 'a';
 		int counter = 1;
 		int temp;
-	
+
 		for(int i = -1; i<=1; i++){
 			for(int j = -1; j<=1; j++){
-				
+
 				if(!(i&&j)){
 					counter = 0;
 					do{
@@ -155,7 +155,7 @@ namespace moves {
 				}
 			}
 		}
-	
+
 		return out;
 	}
 	static std::vector<std::pair<std::string,bool>> fillQueenMoves(std::string position, bool affiliation)
@@ -165,10 +165,10 @@ namespace moves {
 		int x = position[0] - 'a';
 		int counter = 1;
 		int temp;
-	
+
 		for(int i = -1; i<=1; i++){
 			for(int j = -1; j<=1; j++){
-	
+
 				counter = 0;
 				do{
 					counter++;
@@ -180,7 +180,7 @@ namespace moves {
 				}while(temp == 0 && x+counter*i >= 0 && x+counter*i <8 && y+counter*j>=0 && y+counter*j<8);
 			}
 		}
-	
+
 		return out;
 	}
 	static std::vector<std::pair<std::string,bool>> fillKingMoves(std::string position, bool affiliation)
@@ -188,13 +188,13 @@ namespace moves {
 		std::vector<std::pair<std::string,bool>> out;
 		int y = 7-position[1] + '1';
 		int x = position[0] - 'a';
-	
+
 		for(int i = -1; i<=1; i++){
-	
+
 			for(int j = -1; j<=1; j++){
-	
+
 				if((i || j) && y+j >=0 && y+j<8 && x+i<8 && x+i>=0){
-					
+
 					int temp = chessBoard[y][x] * chessBoard[y+j][x+i];
 					if(temp <= 0) out.emplace_back(intsToStringPos(x+i, 7-y-j), temp);
 				}

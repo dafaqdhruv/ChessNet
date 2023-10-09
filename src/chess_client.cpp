@@ -5,7 +5,7 @@
 void* checkForUpdates(void* threadArg);
 
 int main(int argc, char *argv[]){
-	
+
 	QApplication app(argc, argv);
 	std::string server_IP;
 //	if(argc>1) {
@@ -39,7 +39,7 @@ int main(int argc, char *argv[]){
 }
 
 void  *checkForUpdates(void *threadArg){
-	
+
 	ChessClient* Client = (ChessClient*) threadArg;
 
 	while(1){
@@ -47,7 +47,7 @@ void  *checkForUpdates(void *threadArg){
 		// If the client is connected
 		if (Client->IsConnected())
 		{
-			// if there is an incoming message in queue 
+			// if there is an incoming message in queue
 			if (!Client->Incoming().empty())
 			{
 
@@ -58,26 +58,26 @@ void  *checkForUpdates(void *threadArg){
 
 				// Debug message
 				std::cout<<"Message has arrived :: "<<(int)message.header.id<<std::endl;
-				
+
 				switch(message.header.id)
 				{
-					// Return a unique value based on the board's state 
-					// Like a parity function 
+					// Return a unique value based on the board's state
+					// Like a parity function
 					// and match them to check if both boards are in sync.
-					// case GameMessage::GetStatus : 
-					// {}	
+					// case GameMessage::GetStatus :
+					// {}
 					// break;
 
 
 					// Server has accepted the client
 					// Game may begin
-					case GameMessage::Client_Accepted : 
+					case GameMessage::Client_Accepted :
 						{
 							std::cout<<"I HVE BEEN ACCEpTED\n";
 							net::message<GameMessage> msg;
 							msg.header.id = GameMessage::Game_BeginGame;
 							Client->Send(msg);
-						}	
+						}
 						break;
 
 
@@ -112,13 +112,13 @@ void  *checkForUpdates(void *threadArg){
 
 						// Message recieved to start the game
 					case GameMessage::Game_BeginGame : {
-											    Client->MyTurn();
-										     }			// Inform the other player about starting the game
-										     break;
+							Client->MyTurn();
+						}			// Inform the other player about starting the game
+						break;
 				}
 			}
-		} 
-		
+		}
+
 		// If the connection does not exist
 		// Throw error and exit
 		else {

@@ -68,7 +68,7 @@ class gameWindow : public QMainWindow
 		bool getPlayerAffiliation(){ return isPlayerWhite;}
 
 		void movePiece(int from, int to, bool myMove = true)
-		{	
+		{
 			auto fromTile = getTileByPos(from);
 			auto toTile = getTileByPos(to);
 
@@ -83,7 +83,7 @@ class gameWindow : public QMainWindow
 
 			updateBoard(translateInt(from), tilePiece(0));
 			updateBoard(translateInt(to), pieceType);
-			
+
 			if(myMove){
 				char out[4];
 				out[0] = translateInt(from)[0];
@@ -96,18 +96,18 @@ class gameWindow : public QMainWindow
 	signals :
 		void moved(const char arr[4]);
 
-	private : 
+	private :
 
 		// To-do
 		// Layout chessGrid according to player color (Black/White)
 		void createChessGrid(int chessBoard[8][8], bool isWhite)
-		{	
+		{
 			this->isPlayerWhite = isWhite;
 			this->selectable = isWhite;
 			gameWindow::box = new QGroupBox();
 			QGridLayout* chessGridLayout = new QGridLayout();
 
-			bool topLeftColor = true; 	// white true 
+			bool topLeftColor = true; 	// white true
 			for(int i = 0; i<8; i++ )
 			{
 				for(int j = 0; j<8; j++ )
@@ -135,7 +135,7 @@ class gameWindow : public QMainWindow
 
 		void selectTile(int pos)
 		{
-			// If it is Player's turn 
+			// If it is Player's turn
 			if(selectable){
 
 				auto temp = currentlySelectedTile->getPossibleMoves();
@@ -150,7 +150,7 @@ class gameWindow : public QMainWindow
 					movePiece(translateString(currentlySelectedTile->name()), pos);
 					currentlySelectedTile = getTileByPos(pos);
 				}
-				else { 
+				else {
 					auto selectedTile = getTileByPos(pos);
 					//if(selectedTile->getPiece()*currentlySelectedTile->getPiece()>0){
 					if(((selectedTile->getPiece()>0) && isPlayerWhite) || ((selectedTile->getPiece() < 0) && !isPlayerWhite)){
@@ -176,7 +176,7 @@ class gameWindow : public QMainWindow
 		}
 
 
-		bool isPlayerWhite;	
+		bool isPlayerWhite;
 		bool selectable;
 		QGroupBox* box;
 		gameTile* currentlySelectedTile;

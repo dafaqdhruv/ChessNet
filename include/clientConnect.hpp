@@ -28,25 +28,25 @@ class clientConnect : public QDialog
 public:
 	clientConnect()
 	{
-	    createFormGroupBox();
+		createFormGroupBox();
 
-	    connectButton = new QPushButton("&Connect", this);
-	    connectButton -> setAutoDefault(true);
-	    connectButton -> setMaximumWidth(70);
+		connectButton = new QPushButton("&Connect", this);
+		connectButton -> setAutoDefault(true);
+		connectButton -> setMaximumWidth(70);
 
-	    connect(connectButton, &QPushButton::clicked, this, &clientConnect::getIP6);
-	    connect(this, &clientConnect::exportIP6, this, &QDialog::accept);
-	    QVBoxLayout *mainLayout = new QVBoxLayout;
+		connect(connectButton, &QPushButton::clicked, this, &clientConnect::getIP6);
+		connect(this, &clientConnect::exportIP6, this, &QDialog::accept);
+		QVBoxLayout *mainLayout = new QVBoxLayout;
 
-	    mainLayout->addWidget(formGroupBox);
-	    mainLayout->addSpacing(5);
-	    mainLayout->addWidget(connectButton, 0, Qt::AlignRight);
+		mainLayout->addWidget(formGroupBox);
+		mainLayout->addSpacing(5);
+		mainLayout->addWidget(connectButton, 0, Qt::AlignRight);
 
-	    setLayout(mainLayout);
+		setLayout(mainLayout);
 
-	    setWindowTitle(tr("Connect to Server"));
-	    setMinimumSize(360, 135);
-	    setMaximumSize(360, 135);
+		setWindowTitle(tr("Connect to Server"));
+		setMinimumSize(360, 135);
+		setMaximumSize(360, 135);
 	}
 
 
@@ -71,8 +71,8 @@ private:
 		formGroupBox->setLayout(layout);
 	}
 
-    	void getIP6(){
-	
+	void getIP6(){
+
 		ipAddress = QHostAddress(ipLineEdit->displayText());
 
 		if(ipAddress.isNull()){
@@ -80,10 +80,10 @@ private:
 			errorBox.setText("Invalid IP Address.");
 			errorBox.exec();
 		} else {
-			
+
 			QMessageBox continueBox;
 			continueBox.setText("IP address is valid. Are you sure you want to connect to this host?");
-			
+
 			QPushButton *yesButton = continueBox.addButton("&Yes", QMessageBox::YesRole);
 			QPushButton *noButton = continueBox.addButton("&No", QMessageBox::NoRole);
 			continueBox.exec();
@@ -97,7 +97,7 @@ private:
 			}
 		}
 	}
-signals : 
+signals :
 	void exportIP6(const std::string &IP);
 };
 

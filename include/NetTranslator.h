@@ -16,11 +16,11 @@
 
 enum class GameMessage : uint32_t
 {
-	
-	GetStatus,//0 
+
+	GetStatus,//0
 	Ping,
 	YourTurn, //2
-	
+
 	Client_Accepted,
 	Client_AssignID,//4
 	Client_Verify,
@@ -33,12 +33,12 @@ enum class GameMessage : uint32_t
 };
 
 // struct PieceMove {
-	
+
 // 	Pieces PieceType;
 // 	pos To;
 // 	pos From;
 // };
-	
+
 // struct PlayerDescription
 // {
 // 	uint32_t UniqueID = 0;
@@ -46,4 +46,3 @@ enum class GameMessage : uint32_t
 
 // 	uint32_t PiecesAlive = 16;
 // };
-

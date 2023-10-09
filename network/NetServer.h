@@ -32,7 +32,7 @@ namespace net
 			{
 				// Issue a task to the asio context - This is important
 				// as it will prime the context with "work", and stop it
-				// from exiting immediately. Since this is a server, we 
+				// from exiting immediately. Since this is a server, we
 				// want it primed ready to handle clients trying to
 				// connect.
 				WaitForClientConnection(validate);
@@ -79,14 +79,14 @@ namespace net
 						// Display some useful(?) information
 						std::cout << "[SERVER] New Connection: " << socket.remote_endpoint() << "\n";
 
-						// Create a new connection to handle this client 
+						// Create a new connection to handle this client
 						std::shared_ptr<connection<T>> newconn = std::make_shared<connection<T>>(connection<T>::owner::server, m_asioContext, std::move(socket), m_qMessagesIn, validate);
-						
-						
+
+
 
 						// Give the user server a chance to deny connection
 						if (OnClientConnect(newconn))
-						{								
+						{
 							// Connection allowed, so add to container of new connections
 							m_deqConnections.push_back(std::move(newconn));
 
@@ -127,7 +127,7 @@ namespace net
 			}
 			else
 			{
-				// If we cant communicate with client then we may as 
+				// If we cant communicate with client then we may as
 				// well remove the client - let the server know, it may
 				// be tracking it somehow
 				OnClientDisconnect(client);
@@ -140,7 +140,7 @@ namespace net
 					std::remove(m_deqConnections.begin(), m_deqConnections.end(), client), m_deqConnections.end());
 			}
 		}
-		
+
 		// Send message to all clients
 		void MessageAllClients(const message<T>& msg, std::shared_ptr<connection<T>> pIgnoreClient = nullptr)
 		{

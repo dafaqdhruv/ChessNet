@@ -23,7 +23,7 @@ enum tileState : int { neutralTile = 0, selectedTile, underAttackTile, possibleM
 
 
 
-const QColor selectedCol(255, 51, 0, 127);	// orange 
+const QColor selectedCol(255, 51, 0, 127);	// orange
 //const QColor underAttack(255, 0, 0, 127);	// red
 const QColor possibleMoveCol(0, 255, 0, 63);	// green
 
@@ -33,7 +33,7 @@ const QColor possibleMoveCol(0, 255, 0, 63);	// green
 #define whiteKnightPng		":/icons/whiteKnight.png"
 #define whiteQueenPng		":/icons/whiteQueen.png"
 #define whiteKingPng		":/icons/whiteKing.png"
-                                           
+
 #define blackPawnPng	  	":/icons/blackPawn.png"
 #define blackRookPng		":/icons/blackRook.png"
 #define blackBishopPng		":/icons/blackBishop.png"
@@ -42,7 +42,7 @@ const QColor possibleMoveCol(0, 255, 0, 63);	// green
 #define blackKingPng		":/icons/blackKing.png"
 
 
-static std::string translateInt (int pos) 
+static std::string translateInt (int pos)
 {
 	std::string out = "";
 	out += (char)(pos%8 + 'a');
@@ -58,20 +58,20 @@ static int translateString(std::string pos)
 
 
 // Basic game piece unit.
-// Game Tile <--- Clickable QLabel 
+// Game Tile <--- Clickable QLabel
 // ( 8x8 grid of gametiles makes up the chessBoard )
 // can be different pieces, change states and colors.
 
-class gameTile : public QLabel 
+class gameTile : public QLabel
 {
 	Q_OBJECT
 
 public :
 
-	explicit gameTile (int pos, bool color, int pieceType = 0, QWidget* parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags() ) 
+	explicit gameTile (int pos, bool color, int pieceType = 0, QWidget* parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags() )
 		: QLabel(parent, f)
-	{	
-		
+	{
+
 		// init tile
 		this->state = tileState::neutralTile;
 		this->piece = pieceType;
@@ -79,12 +79,12 @@ public :
 		this->position = pos;
 		this->possibleMoves = std::vector<int>();
 		this->possibleKillShots = std::vector<int>();
-		
+
 		setTileIcon(static_cast<tilePiece>(pieceType));
-		
-		if(!color)	
+
+		if(!color)
 		{
-			QPalette pal; 
+			QPalette pal;
 			pal.setColor(QPalette::Window, Qt::darkGray);
 			this->setPalette(pal);
 		}
@@ -103,11 +103,11 @@ public :
 		QColor col = selectedCol;
 		if(!this->color)col = col.darker();
 		pal.setColor(QPalette::Window, col);
-		this->setPalette(pal);	
+		this->setPalette(pal);
 
 		fillPossibleMoves();
 	}
-	
+
 	void setPossible()
 	{
 		state = tileState::possibleMoveTile;
@@ -115,14 +115,14 @@ public :
 		QColor col = possibleMoveCol;
 		if(!this->color)col = col.darker();
 		pal.setColor(QPalette::Window, col);
-		this->setPalette(pal);	
+		this->setPalette(pal);
 	}
-	void unselect() 
+	void unselect()
 	{
 		state = tileState::neutralTile;
 		if(this->color)
 			this->setPalette(QPalette(QPalette::Window, Qt::white));
-		else 
+		else
 			this->setPalette(QPalette(QPalette::Window, Qt::darkGray));
 	}
 
@@ -131,10 +131,10 @@ public :
 
 		return translateInt(position);
 	}
-	
+
 //	void paintTile(tileState in_state)
 //	{
-//		
+//
 //	}
 
 	std::vector<int> getPossibleMoves (){
@@ -150,38 +150,38 @@ public :
 	void setTileIcon(tilePiece in_piece, int id = 0)
 	{
 		QPixmap tempPixmap;
-		
+
 		piece = in_piece;
 		// to-do
 		// Messy, might add exception handling later
 		switch(in_piece)
 		{
-			case tilePiece::blackPawn :	 if(!tempPixmap.load(blackPawnPng)) {qDebug()<<"Error Loading tile type " << in_piece;} 
+			case tilePiece::blackPawn :	 if(!tempPixmap.load(blackPawnPng)) {qDebug()<<"Error Loading tile type " << in_piece;}
 				break;
-			case tilePiece::blackBishop :	 if(!tempPixmap.load(blackBishopPng))   {qDebug()<<"Error Loading tile type " << in_piece;} 
+			case tilePiece::blackBishop :	 if(!tempPixmap.load(blackBishopPng))   {qDebug()<<"Error Loading tile type " << in_piece;}
 				break;
-			case tilePiece::blackRook : 	 if(!tempPixmap.load(blackRookPng))  {qDebug()<<"Error Loading tile type " << in_piece;} 
+			case tilePiece::blackRook : 	 if(!tempPixmap.load(blackRookPng))  {qDebug()<<"Error Loading tile type " << in_piece;}
 				break;
-			case tilePiece::blackKnight :	 if(!tempPixmap.load(blackKnightPng))   {qDebug()<<"Error Loading tile type " << in_piece;} 
+			case tilePiece::blackKnight :	 if(!tempPixmap.load(blackKnightPng))   {qDebug()<<"Error Loading tile type " << in_piece;}
 				break;
-			case tilePiece::blackQueen : 	 if(!tempPixmap.load(blackQueenPng))   {qDebug()<<"Error Loading tile type " << in_piece;} 
+			case tilePiece::blackQueen : 	 if(!tempPixmap.load(blackQueenPng))   {qDebug()<<"Error Loading tile type " << in_piece;}
 				break;
-			case tilePiece::blackKing : 	 if(!tempPixmap.load(blackKingPng))  {qDebug()<<"Error Loading tile type " << in_piece;} 
+			case tilePiece::blackKing : 	 if(!tempPixmap.load(blackKingPng))  {qDebug()<<"Error Loading tile type " << in_piece;}
 				break;
-			case tilePiece::whitePawn :  	 if(!tempPixmap.load(whitePawnPng))  {qDebug()<<"Error Loading tile type " << in_piece;} 
-				break;                 
-			case tilePiece::whiteBishop :	 if(!tempPixmap.load(whiteBishopPng))   {qDebug()<<"Error Loading tile type " << in_piece;} 
-				break;                 
-			case tilePiece::whiteRook : 	 if(!tempPixmap.load(whiteRookPng)) {qDebug()<<"Error Loading tile type " << in_piece;} 
-				break;                 
-			case tilePiece::whiteKnight :	 if(!tempPixmap.load(whiteKnightPng))   {qDebug()<<"Error Loading tile type " << in_piece;} 
-				break;                 
-			case tilePiece::whiteQueen : 	 if(!tempPixmap.load(whiteQueenPng))   {qDebug()<<"Error Loading tile type " << in_piece;} 
-				break;                 
-			case tilePiece::whiteKing : 	 if(!tempPixmap.load(whiteKingPng))  {qDebug()<<"Error Loading tile type " << in_piece;} 
+			case tilePiece::whitePawn :  	 if(!tempPixmap.load(whitePawnPng))  {qDebug()<<"Error Loading tile type " << in_piece;}
+				break;
+			case tilePiece::whiteBishop :	 if(!tempPixmap.load(whiteBishopPng))   {qDebug()<<"Error Loading tile type " << in_piece;}
+				break;
+			case tilePiece::whiteRook : 	 if(!tempPixmap.load(whiteRookPng)) {qDebug()<<"Error Loading tile type " << in_piece;}
+				break;
+			case tilePiece::whiteKnight :	 if(!tempPixmap.load(whiteKnightPng))   {qDebug()<<"Error Loading tile type " << in_piece;}
+				break;
+			case tilePiece::whiteQueen : 	 if(!tempPixmap.load(whiteQueenPng))   {qDebug()<<"Error Loading tile type " << in_piece;}
+				break;
+			case tilePiece::whiteKing : 	 if(!tempPixmap.load(whiteKingPng))  {qDebug()<<"Error Loading tile type " << in_piece;}
 				break;
 		}
-	
+
 		setAutoFillBackground(true);
 		setPixmap(tempPixmap);
 		setScaledContents(true);
@@ -198,10 +198,10 @@ public :
 	// only to be called when piece is selected
 	void fillPossibleMoves()
 	{
-		std::vector<std::pair<std::string,bool>> tempList; 
+		std::vector<std::pair<std::string,bool>> tempList;
 
 		switch(piece){
-	
+
 			case tilePiece::blackPawn :	tempList = moves::fillPawnMoves(name(), 0);
 				break;
 			case tilePiece::blackBishop :	tempList = moves::fillBishopMoves(name(), 0);
@@ -215,19 +215,19 @@ public :
 			case tilePiece::blackKing : 	tempList = moves::fillKingMoves(name(), 0);
 				break;
 			case tilePiece::whitePawn :  	tempList = moves::fillPawnMoves(name(), 1);
-				break;                                                     
+				break;
 			case tilePiece::whiteBishop :	tempList = moves::fillBishopMoves(name(), 1);
-				break;                                                     
+				break;
 			case tilePiece::whiteRook : 	tempList = moves::fillRookMoves(name(), 1);
-				break;                                                     
+				break;
 			case tilePiece::whiteKnight :	tempList = moves::fillKnightMoves(name(), 1);
-				break;                                                     
+				break;
 			case tilePiece::whiteQueen : 	tempList = moves::fillQueenMoves(name(), 1);
-				break;                                                     
+				break;
 			case tilePiece::whiteKing : 	tempList = moves::fillKingMoves(name(), 1);
 				break;
 			default : std::cout<<"gabagooee\n";
-		}	
+		}
 
 		for(auto [pos, attack] : tempList){
 
@@ -236,11 +236,11 @@ public :
 		}
 	}
 
-protected : 
+protected :
 
 	// used mouseRelease instead of mousePress
 	// !!ISSUE
-	// release not recorded on the tile on which click was released 
+	// release not recorded on the tile on which click was released
 	// but the one that was pressed.
 	void mouseReleaseEvent(QMouseEvent *event){
 		emit clicked(position);
@@ -256,8 +256,8 @@ private :
 	int state; 			// state of current tile -> neutral/selected/threatened/etc
 	bool color;			// is Tile black/white
 	int piece;			// is there a piece on the tile? if yes which?
-	
-	int position;		// 0-63 translated to a1 --> h8 
+
+	int position;		// 0-63 translated to a1 --> h8
 
 	std::vector<int> possibleMoves;
 	std::vector<int> possibleKillShots;

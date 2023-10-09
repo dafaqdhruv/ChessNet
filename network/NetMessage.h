@@ -38,8 +38,8 @@ namespace net
 		}
 
 		// Convenience Operator overloads - These allow us to add and remove stuff from
-		// the body vector as if it were a stack, so First in, Last Out. These are a 
-		// template in itself, because we dont know what data type the user is pushing or 
+		// the body vector as if it were a stack, so First in, Last Out. These are a
+		// template in itself, because we dont know what data type the user is pushing or
 		// popping, so lets allow them all. NOTE: It assumes the data type is fundamentally
 		// Plain Old Data (POD). TLDR: Serialise & Deserialise into/from a vector
 
@@ -88,12 +88,12 @@ namespace net
 
 			// Return the target message so it can be "chained"
 			return msg;
-		}			
+		}
 	};
 
 
 	// An "owned" message is identical to a regular message, but it is associated with
-	// a connection. On a server, the owner would be the client that sent the message, 
+	// a connection. On a server, the owner would be the client that sent the message,
 	// on a client the owner would be the server.
 
 	// Forward declare the connection
@@ -112,8 +112,7 @@ namespace net
 			os << msg.msg;
 			return os;
 		}
-	};		
+	};
 
 	///[OLC_HEADERIFYIER] END "MESSAGE"
 }
-

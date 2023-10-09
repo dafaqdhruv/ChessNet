@@ -6,7 +6,7 @@
 
 
 namespace net
-{	
+{
 
 	// forward declaration
 	template<typename T>
@@ -40,7 +40,7 @@ namespace net
 				// Construct random data for the client to send back for validation
 				m_nHandshakeOut = validate;
 				m_nHandshakeCheck = scramble(m_nHandshakeOut);
-				
+
 				//Broadcastif server
 //				asio::socket_base::broadcast option(true);
 //				m_socket.set_option(option);
@@ -119,7 +119,7 @@ namespace net
 		// Prime the connection to wait for incoming messages
 		void StartListening()
 		{
-			
+
 		}
 
 	public:
@@ -130,15 +130,15 @@ namespace net
 			asio::post(m_asioContext,
 				[this, msg]()
 				{
-					// If the queue has a message in it, then we must 
+					// If the queue has a message in it, then we must
 					// assume that it is in the process of asynchronously being written.
 					// Either way add the message to the queue to be output. If no messages
 					// were available to be written, then start the process of writing the
 					// message at the front of the queue.
 					bool bWritingMessage = !m_qMessagesOut.empty();
 					m_qMessagesOut.push_back(msg);
-					
-					
+
+
 					if (!bWritingMessage)
 					{
 						WriteHeader();
@@ -152,7 +152,7 @@ namespace net
 		// ASYNC - Prime context to write a message header
 		void WriteHeader()
 		{
-			// If this function is called, we know the outgoing message queue must have 
+			// If this function is called, we know the outgoing message queue must have
 			// at least one message to send. So allocate a transmission buffer to hold
 			// the message, and issue the work - asio, send these bytes
 			asio::async_write(m_socket, asio::buffer(&m_qMessagesOut.front().header, sizeof(message_header<T>)),
@@ -171,7 +171,7 @@ namespace net
 						}
 						else
 						{
-							// ...it didnt, so we are done with this message. Remove it from 
+							// ...it didnt, so we are done with this message. Remove it from
 							// the outgoing message queue
 							m_qMessagesOut.pop_front();
 
@@ -185,7 +185,7 @@ namespace net
 					}
 					else
 					{
-						// ...asio failed to write the message, we could analyse why but 
+						// ...asio failed to write the message, we could analyse why but
 						// for now simply assume the connection has died by closing the
 						// socket. When a future attempt to write to this client fails due
 						// to the closed socket, it will be tidied up.
@@ -210,7 +210,7 @@ namespace net
 						// and remove it from the queue
 						m_qMessagesOut.pop_front();
 
-						// If the queue still has messages in it, then issue the task to 
+						// If the queue still has messages in it, then issue the task to
 						// send the next messages' header.
 						if (!m_qMessagesOut.empty())
 						{
@@ -231,12 +231,12 @@ namespace net
 		{
 			// If this function is called, we are expecting asio to wait until it receives
 			// enough bytes to form a header of a message. We know the headers are a fixed
-			// size, so allocate a transmission buffer large enough to store it. In fact, 
-			// we will construct the message in a "temporary" message object as it's 
+			// size, so allocate a transmission buffer large enough to store it. In fact,
+			// we will construct the message in a "temporary" message object as it's
 			// convenient to work with.
 			asio::async_read(m_socket, asio::buffer(&m_msgTemporaryIn.header, sizeof(message_header<T>)),
 				[this](std::error_code ec, std::size_t length)
-				{						
+				{
 					if (!ec)
 					{
 						// A complete message header has been read, check if this message
@@ -273,7 +273,7 @@ namespace net
 			// in the temporary message object, so just wait for the bytes to arrive...
 			asio::async_read(m_socket, asio::buffer(m_msgTemporaryIn.body.data(), m_msgTemporaryIn.body.size()),
 				[this](std::error_code ec, std::size_t length)
-				{						
+				{
 					if (!ec)
 					{
 						// ...and they have! The message is now complete, so add
@@ -291,7 +291,7 @@ namespace net
 
 		// Once a full message is received, add it to the incoming queue
 		void AddToIncomingMessageQueue()
-		{				
+		{
 			// Shove it in queue, converting it to an "owned message", by initialising
 			// with the a shared pointer from this connection object
 			if(m_nOwnerType == owner::server)
@@ -299,7 +299,7 @@ namespace net
 			else
 				m_qMessagesIn.push_back({ nullptr, m_msgTemporaryIn });
 
-			// We must now prime the asio context to receive the next message. It 
+			// We must now prime the asio context to receive the next message. It
 			// wil just sit and wait for bytes to arrive, and the message construction
 			// process repeats itself. Clever huh?
 			ReadHeader();
@@ -309,23 +309,23 @@ namespace net
 
 			uint64_t  out = input ^ 0xDEADBEEFC0DECAFE;
 			out = ( out & 0xF0F0F0F0F0F0F0) >>  4 | ( out & 0x0F0F0F0F0F0F0F)  << 4;
-			return out ^ 0xC0DEFACE12345678;	
+			return out ^ 0xC0DEFACE12345678;
 		}
 
 		//ASYNC - used both by client and server to write validation packet
 		void WriteValidation()
 		{
 
-			asio::async_write(m_socket, asio::buffer(&m_nHandshakeOut, sizeof(uint64_t)), 
+			asio::async_write(m_socket, asio::buffer(&m_nHandshakeOut, sizeof(uint64_t)),
 				[this](std::error_code ec, std::size_t length)
 				{
 					if(!ec)
-					{	
+					{
 						//client should sit and wait for response
 						if(m_nOwnerType == owner::client)
 							ReadHeader();
 					}
-					else 
+					else
 					{
 						m_socket.close();
 					}
@@ -379,7 +379,7 @@ namespace net
 		}
 
 	protected:
-		// Each connection has a unique socket to a remote 
+		// Each connection has a unique socket to a remote
 		asio::ip::tcp::socket m_socket;
 
 		// This context is shared with the whole asio instance

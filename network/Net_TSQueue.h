@@ -98,7 +98,7 @@ namespace net
 	protected:
 		std::mutex muxQueue;
 		std::deque<T> deqQueue;
-		
+
 		std::condition_variable cvBlocking;
 		std::mutex muxBlocking;
 	};
