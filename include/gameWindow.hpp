@@ -35,15 +35,13 @@ QT_END_NAMESPACE
 
 
 
-class gameWindow : public QMainWindow
-
+class GameWindow : public QMainWindow
 {
 	Q_OBJECT
 
 	public :
-		gameWindow(int chessBoard[8][8], bool isPlayerWhite = true)
+		GameWindow(int chessBoard[8][8], bool isPlayerWhite = true)
 		{
-
 			createChessGrid(chessBoard, isPlayerWhite);
 
 			setCentralWidget(box);
@@ -98,7 +96,7 @@ class gameWindow : public QMainWindow
 		{
 			this->isPlayerWhite = isWhite;
 			this->selectable = isWhite;
-			gameWindow::box = new QGroupBox();
+			GameWindow::box = new QGroupBox();
 			QGridLayout* chessGridLayout = new QGridLayout();
 
 			bool topLeftColor = true; 	// white true
@@ -106,10 +104,11 @@ class gameWindow : public QMainWindow
 			{
 				for(int j = 0; j<8; j++ )
 				{
-					gameWindow::tiles[i][j] = new gameTile( abs(7*!isPlayerWhite - i)*8+j, topLeftColor ^ (j%2), chessBoard[abs((7*!isPlayerWhite)-i)][j]);		// would give that alternating white/black pattern
-					gameWindow::tiles[i][j]->setMinimumSize(91,91);
-					connect(gameWindow::tiles[i][j], &gameTile::clicked, this, &gameWindow::selectTile);
-					chessGridLayout->addWidget(gameWindow::tiles[i][j], i+1, j+1);
+					GameWindow::tiles[i][j] = new gameTile( abs(7*!isPlayerWhite - i)*8+j, topLeftColor ^ (j%2), chessBoard[abs((7*!isPlayerWhite)-i)][j]);		// would give that alternating white/black pattern
+					GameWindow::tiles[i][j]->setMinimumSize(91,91);
+
+					connect(GameWindow::tiles[i][j], &gameTile::clicked, this, &GameWindow::selectTile);
+					chessGridLayout->addWidget(GameWindow::tiles[i][j], i+1, j+1);
 				}
 				topLeftColor = !topLeftColor;
 			}

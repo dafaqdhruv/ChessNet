@@ -1,57 +1,70 @@
 #include <QApplication>
 
+#include "../include/ChessCommon.hpp"
 #include "../include/commonWindows.hpp"
 
+INITIALIZE_EASYLOGGINGPP
 
-void boom(){
-  setupServer setupServerWindow;
-  int scrambler;
-  QObject::connect(&setupServerWindow, &setupServer::exportScrambler, [&scrambler](const int ret){scrambler = ret;});
-  setupServerWindow.show();
-  std::cout<<"Yo i just made a server type player "<<scrambler<<"\n";
-  //        serverTypePlayer player(scrambler);
-  //      player.show();
-}
-void baam(){
-  ClientConnect clientConnectWin;
-  std::string IP6;
-  QObject::connect(&ClientConnectWin, &ClientConnect::exportIP6, [&IP6](const std::string ret){IP6 = ret;
-  std::cout<<"Yo i just made a client type player "<<IP6<<"\n";
-      });
-  clientConnectWin.show();
-  //        clientTypePlayer player(IP6);
-  //      player.show();
+void  *checkServerForUpdates(void *threadArg){
+	ChessServer* Server = (ChessServer*) threadArg;
+
+	while(1){
+		Server->Update();
+	}
 }
 
+void  *checkClientForUpdates(void *threadArg){
+	ChessClient* Client = (ChessClient*) threadArg;
 
+	while(1){
+		Client->Update();
+	}
+}
 
+void CreateNewGame(){
+    ChessServer* Server = new ChessServer(DEFAULT_PORT,7587303549, WHITE);
 
+    pthread_t serverThread;
+    int rc = pthread_create(&serverThread, NULL, checkServerForUpdates, (void*)Server);
+}
 
+void ConnectToGame(std::string ip){
+    ChessClient* Client = new ChessClient(ip, DEFAULT_PORT, BLACK);
+
+    pthread_t clientThread;
+    int rc = pthread_create(&clientThread, NULL, checkClientForUpdates, (void*)Client);
+}
 
 int main(int argc, char *argv[])
 {
-  QApplication app(argc, argv);
+    QApplication app(argc, argv);
 
-  askMediumDialog medium;
-  bool makeServer = false;
-  medium.show();
+    uint8_t x = 0;
+    GameDialog dialog;
 
-  QObject::connect(&medium, &askMediumDialog::medium,[&makeServer,&medium](const bool ret){
-      makeServer = ret;    //    medium.show();
-//      medium.accept();
-      if(makeServer){
-      int ok;
-      int text = QInputDialog::getInt(nullptr, "Get Scrambler",
-          "Scrambler val : ",0, 1000,9999);
-      std::cout<<text<<std::endl;
+    QObject::connect(
+        &dialog,
+        &GameDialog::medium,
+        [=](const bool makeServer) {
+            if(makeServer){
+                CreateNewGame();
+            } else{
+                ClientConnect getIpDialog;
+                QObject::connect(
+                    &getIpDialog,
+                    &ClientConnect::exportIP6,
+                    [](const std::string serverIP){
+                        ConnectToGame(serverIP);
+                    }
+                );
+                getIpDialog.exec();
+            }
+        }
+    );
 
-      boom();
-      } else {
+    dialog.show();
+    app.exec();
 
-      baam();
-      }
-      });
-
-
-  return app.exec();
+    sleep(2);
+    return 0;
 }

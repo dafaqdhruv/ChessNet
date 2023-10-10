@@ -80,6 +80,28 @@ namespace net
 				m_connection->Send(msg);
 		}
 
+		virtual void OnMessage(std::shared_ptr<connection<T>> client, message<T>& msg)
+		{
+
+		}
+
+		void Update(size_t nMaxMessages = -1, bool bWait = false)
+		{
+			if (bWait) m_qMessagesIn.wait();
+
+			size_t nMessageCount = 0;
+			while (nMessageCount < nMaxMessages && !m_qMessagesIn.empty())
+			{
+				// Grab the front message
+				auto msg = m_qMessagesIn.pop_front();
+
+				// Pass to message handler
+				OnMessage(msg.remote, msg.msg);
+
+				nMessageCount++;
+			}
+		}
+
 		// Retrieve queue of messages from server
 		tsqueue<owned_message<T>>& Incoming()
 		{

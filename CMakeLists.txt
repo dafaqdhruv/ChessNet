@@ -38,7 +38,10 @@ qt_add_executable(setupGameWindow
 	include/board.hpp
 	include/gameTile.hpp
 	include/gameWindow.hpp
-	src/gameWindow.cpp
+	include/ChessCommon.hpp
+	include/commonWindows.hpp
+	include/easylogging++.cc
+	src/main.cpp
 )
 
 set_target_properties(setupGameWindow PROPERTIES
@@ -51,6 +54,8 @@ target_link_libraries(setupGameWindow PUBLIC
     Qt::Gui
     Qt::Widgets
     Qt::Network
+    ChessNetLib
+    ${CMAKE_THREAD_LIBS_INIT}
 )
 
 qt6_add_resources(setupGameWindow "icons"
@@ -128,8 +133,8 @@ qt_add_executable(client
 	include/board.hpp
 	include/gameTile.hpp
 	include/gameWindow.hpp
-	include/clientConnect.hpp
 	include/ChessCommon.hpp
+	include/commonWindows.hpp
 	include/easylogging++.cc
 	src/chess_client.cpp
 )

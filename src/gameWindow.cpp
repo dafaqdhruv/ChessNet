@@ -27,7 +27,7 @@
 int main(int argc, char *argv[])
 {
 	QApplication app(argc, argv);
-	gameWindow mainWindow(::chessBoard, false);
+	GameWindow mainWindow(::chessBoard, false);
 #ifdef Q_OS_ANDROID
 	mainWindow.showMaximized();
 #else
