@@ -44,6 +44,11 @@ class GameWindow : public QMainWindow
 		{
 			createChessGrid(chessBoard, isPlayerWhite);
 
+			std::string kingPos = (isPlayerWhite) ? "e1" : "e8";
+			this->myKing = getTileByPos(translateString(kingPos));
+
+			QObject::connect(this, &GameWindow::check, this, &GameWindow::kingCompromised);
+
 			setCentralWidget(box);
 			setWindowTitle(tr("ChessNet"));
 			setMaximumSize(800, 800);
@@ -77,25 +82,70 @@ class GameWindow : public QMainWindow
 			updateBoard(translateInt(to), pieceType);
 
 			if(myMove){
-				char out[4];
-				out[0] = translateInt(from)[0];
-				out[1] = translateInt(from)[1];
-				out[2] = translateInt(to)[0];
-				out[3] = translateInt(to)[1];
+				std::string out = "";
+				out += translateInt(from);
+				out += translateInt(to);
 				emit moved(out);
 			}
 		}
+
+		void kingCompromised(std::string pos) {
+			gameTile* attacker = getTileByPos(translateString(pos));
+			this->myKing->setCompromised();
+		}
+
+		bool isKingsUnsafeFrom(std::string pos)
+		{
+			bool out = false;
+
+			switch(getPieceType(translateString(pos))){
+				case whitePawn:
+				case blackPawn:
+					out = moves::canPawnKillPos(pos, myKing->name());
+					break;
+
+				case whiteRook:
+				case blackRook:
+					out = moves::canRookKillPos(pos, myKing->name());
+					break;
+
+				case whiteBishop:
+				case blackBishop:
+					out = moves::canBishopKillPos(pos, myKing->name());
+					break;
+
+				case whiteKnight:
+				case blackKnight:
+					out = moves::canKnightKillPos(pos, myKing->name());
+					break;
+
+				case whiteQueen:
+				case blackQueen:
+					out = moves::canQueenKillPos(pos, myKing->name());
+					break;
+
+				case whiteKing:
+				case blackKing:
+					out = moves::canKingKillPos(pos, myKing->name());
+					break;
+			}
+
+			if (out) emit check(pos);
+			return out;
+		}
+
 	signals :
-		void moved(const char arr[4]);
+		void moved(std::string str);
+		void check(std::string str);
 
 	private :
 
 		// To-do
 		// Layout chessGrid according to player color (Black/White)
-		void createChessGrid(int chessBoard[8][8], bool isWhite)
+		void createChessGrid(int chessBoard[8][8], bool isPlayerWhite)
 		{
-			this->isPlayerWhite = isWhite;
-			this->selectable = isWhite;
+			this->isPlayerWhite = isPlayerWhite;
+			this->selectable = isPlayerWhite;
 			GameWindow::box = new QGroupBox();
 			QGridLayout* chessGridLayout = new QGridLayout();
 
@@ -104,11 +154,17 @@ class GameWindow : public QMainWindow
 			{
 				for(int j = 0; j<8; j++ )
 				{
-					GameWindow::tiles[i][j] = new gameTile( abs(7*!isPlayerWhite - i)*8+j, topLeftColor ^ (j%2), chessBoard[abs((7*!isPlayerWhite)-i)][j]);		// would give that alternating white/black pattern
-					GameWindow::tiles[i][j]->setMinimumSize(91,91);
+					auto y = abs(7*!isPlayerWhite-j);
+					GameWindow::tiles[i][y] = new gameTile(
+						abs(7*!isPlayerWhite - i)*8+y,
+						topLeftColor ^ (j%2),
+						chessBoard[abs((7*!isPlayerWhite)-i)][y]
+					);
 
-					connect(GameWindow::tiles[i][j], &gameTile::clicked, this, &GameWindow::selectTile);
-					chessGridLayout->addWidget(GameWindow::tiles[i][j], i+1, j+1);
+					GameWindow::tiles[i][y]->setMinimumSize(91,91);
+
+					connect(GameWindow::tiles[i][y], &gameTile::clicked, this, &GameWindow::selectTile);
+					chessGridLayout->addWidget(GameWindow::tiles[i][y], i+1, j+1);
 				}
 				topLeftColor = !topLeftColor;
 			}
@@ -118,12 +174,18 @@ class GameWindow : public QMainWindow
 			} else {
 				currentlySelectedTile = tiles[7][0];
 			}
+
 			std::cout<<"CURRENTLY SELECTED TILE ==> "<<currentlySelectedTile->name()<<std::endl;
 			box->setLayout(chessGridLayout);
 		}
 
 		gameTile* getTileByPos(int pos){
 			return tiles[abs(7*!isPlayerWhite-pos/8)][pos%8];
+		}
+
+		tilePiece getPieceType(int pos)
+		{
+			return getTileByPos(pos)->getPiece();
 		}
 
 		void selectTile(int pos)
@@ -173,6 +235,7 @@ class GameWindow : public QMainWindow
 		bool selectable;
 		QGroupBox* box;
 		gameTile* currentlySelectedTile;
+		gameTile* myKing;
 		gameTile* tiles[8][8];	//  a -- h
 		// 1
 		// |

@@ -21,10 +21,8 @@ QT_END_NAMESPACE
 enum tileState : int { neutralTile = 0, selectedTile, underAttackTile, possibleMoveTile};
 //enum tilePiece : int {blackPawn = -6, blackBishop, blackKnight, blackRook, blackQueen, blackKing, nil, whiteKing, whiteQueen, whiteRook, whiteKnight, whiteBishop, whitePawn};
 
-
-
 const QColor selectedCol(255, 51, 0, 127);	// orange
-//const QColor underAttack(255, 0, 0, 127);	// red
+const QColor underAttack(255, 0, 0, 127);	// red
 const QColor possibleMoveCol(0, 255, 0, 63);	// green
 
 #define whitePawnPng		":/icons/whitePawn.png"
@@ -57,9 +55,6 @@ static int translateString(T pos)
 	return (int)((pos[0]-'a') + (7-(pos[1]-'1'))*8);
 }
 
-
-
-
 // Basic game piece unit.
 // Game Tile <--- Clickable QLabel
 // ( 8x8 grid of gametiles makes up the chessBoard )
@@ -74,8 +69,6 @@ public :
 	explicit gameTile (int pos, bool color, int pieceType = 0, QWidget* parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags() )
 		: QLabel(parent, f)
 	{
-
-		// init tile
 		this->state = tileState::neutralTile;
 		this->piece = pieceType;
 		this->color = color;
@@ -111,6 +104,16 @@ public :
 		fillPossibleMoves();
 	}
 
+	void setCompromised()
+	{
+		state = tileState::selectedTile;
+		QPalette pal;
+		QColor col = underAttack;
+		if(!this->color)col = col.darker();
+		pal.setColor(QPalette::Window, col);
+		this->setPalette(pal);
+	}
+
 	void setPossible()
 	{
 		state = tileState::possibleMoveTile;
@@ -131,7 +134,6 @@ public :
 
 	std::string name()
 	{
-
 		return translateInt(position);
 	}
 
@@ -150,6 +152,7 @@ public :
 	tilePiece getPiece(){
 		return (tilePiece)piece;
 	}
+
 	void setTileIcon(tilePiece in_piece, int id = 0)
 	{
 		QPixmap tempPixmap;
@@ -229,7 +232,7 @@ public :
 				break;
 			case tilePiece::whiteKing : 	tempList = moves::fillKingMoves(name(), 1);
 				break;
-			default : std::cout<<"gabagooee\n";
+			default : std::cout<<"Invalid piece: "<<piece<<"\n";
 		}
 
 		for(auto [pos, attack] : tempList){

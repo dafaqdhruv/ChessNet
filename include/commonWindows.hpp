@@ -131,7 +131,7 @@ public:
 	virtual ~GameDialog(){}
 
 signals:
-	void medium (const bool ret);
+	void medium (const bool &ret);
 private:
 	QRadioButton *client;
 	QRadioButton *server;

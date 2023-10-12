@@ -38,6 +38,7 @@ class ChessServer :  public net::server_interface<GameMessage>, public GameWindo
 	private:
 		el::Logger* ServerLogger;
 
+		std::shared_ptr<net::connection<GameMessage>> opponent;
 		bool opponent_active = 0;
 		bool init;
 
@@ -58,6 +59,8 @@ class ChessServer :  public net::server_interface<GameMessage>, public GameWindo
 		{
 			// Start the server with a validation key
 			init = true;
+			opponent = nullptr;
+
 			Start(validation);
 			this->show();
 		}
@@ -75,22 +78,21 @@ class ChessServer :  public net::server_interface<GameMessage>, public GameWindo
 			client->Send(msg);
 		}
 
-		// void BeginGame(std::shared_ptr<net::connection<GameMessage>> client) {
-		// 	net::message<GameMessage> msg;
-		// 	msg.header.id = GameMessage::YourTurn;
-
-		// 	CLOG(INFO, "Server") << "Game Start.";
-		// 	client->Send(msg);
-		// }
-
 		void MyTurn(std::shared_ptr<net::connection<GameMessage>> client) {
 			this->makeTilesSelectable(true);
+		}
 
-			// TODO why call connect every turn??
+	protected:
+		virtual bool OnClientConnect(std::shared_ptr<net::connection<GameMessage>> client)
+		{
+			if(opponent_active) return false;
+			opponent = client;
+			opponent_active = true;
+
 			QObject::connect(
 				this,
 				&GameWindow::moved,
-				[=] (const char* myMove) {
+				[=] (const std::string myMove) {
 					net::message<GameMessage> msg;
 					msg.header.id = GameMessage::YourTurn;
 
@@ -102,12 +104,6 @@ class ChessServer :  public net::server_interface<GameMessage>, public GameWindo
 					this->makeTilesSelectable(false);
 				}
 			);
-		}
-
-	protected:
-		virtual bool OnClientConnect(std::shared_ptr<net::connection<GameMessage>> client)
-		{
-			if(opponent_active) return false;
 
 			net::message<GameMessage> msg;
 			msg.header.id = GameMessage::Client_Accepted;
@@ -115,7 +111,6 @@ class ChessServer :  public net::server_interface<GameMessage>, public GameWindo
 			CLOG(INFO, "Server") << "Client connect: " << client->GetID();
 
 			client->Send(msg);
-			opponent_active = true;
 			return true;
 		}
 
@@ -143,14 +138,18 @@ class ChessServer :  public net::server_interface<GameMessage>, public GameWindo
 
 				case GameMessage::YourTurn :
 				{
-					char move[4];
-					for(int8_t i = 3; i>=0; i--) {
-						msg >> move[i];
+					std::string move = "";
+					char c;
+					for(int8_t i = 0; i < 4; i++) {
+						msg >> c;
+						move = c + move;
 					}
 
 					CLOG(INFO, "Server") << "[" << client->GetID() << "] Opponent move received: " << move;
 
-					this->movePiece(translateString(&move[0]), translateString(&move[2]), false);
+					this->movePiece(translateString(move.substr(0,2)), translateString(move.substr(2,2)), false);
+					this->GameWindow::isKingsUnsafeFrom(move.substr(2,2));
+
 					MyTurn(client);
 				}
 				break;
@@ -211,13 +210,16 @@ public:
 		QObject::connect(
 			this,
 			&GameWindow::moved,
-			[=] (const char* move){
+			[=] (const std::string move){
 				net::message<GameMessage> msg;
 				msg.header.id = GameMessage::YourTurn;
 
-				for(uint8_t i = 0; i<4; i++){
+				CLOG(INFO, "Client") << "My move" << move;
+
+				for(uint8_t i = 0; i < 4; i++){
 					msg << move[i];
 				}
+
 				Send(msg);
 				this->makeTilesSelectable(false);
 			}
@@ -274,14 +276,23 @@ protected:
 		case GameMessage::YourTurn : {
 			bool is_my_move = false;
 
-			char move[4];
+			char tmp[4];
+
 			for(int8_t i = 3; i>=0; i--){
-				message >> move[i];
+				message >> tmp[i];
 			}
 
-			CLOG(INFO, "Client") << "Opponent move: " << std::string(move);
+			std::string move = "";
+			move += tmp[0];
+			move += tmp[1];
+			move += tmp[2];
+			move += tmp[3];
 
-			this->movePiece(translateString(&move[0]), translateString(&move[2]), is_my_move);
+			CLOG(INFO, "Client") << "Opponent move: " << move;
+
+			this->movePiece(translateString(move.substr(0,2)), translateString(move.substr(2,2)), is_my_move);
+			this->GameWindow::isKingsUnsafeFrom(move.substr(2,2));
+
 			MyTurn();
 		}
 		break;
